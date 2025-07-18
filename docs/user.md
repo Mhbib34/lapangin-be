@@ -69,7 +69,6 @@ Response Body (Success) :
     "isAccountVerified": false,
   }
   "token":"jwt"
-
 }
 ```
 
@@ -120,6 +119,7 @@ Endpoint : PATCH /api/users
 
 Request Header :
 
+Content-Type: application/json
 Cookie: token= jwt
 
 Request Body :
@@ -274,6 +274,7 @@ Endpoint : PATCH /api/users/verify-email
 
 Request Header :
 
+Content-Type: application/json
 Cookie: token= jwt
 
 Request Body :
