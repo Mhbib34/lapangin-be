@@ -1,0 +1,31 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# Prisma generated files
+prisma/migrations/
+
+# Optional: SQLite database (jika pakai SQLite)
+*.db
+*.sqlite
+
+# TypeScript cache
+*.tsbuildinfo
+
+# VSCode settings
+.vscode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
