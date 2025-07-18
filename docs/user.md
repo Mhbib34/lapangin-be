@@ -25,7 +25,6 @@ Response Body (Success) :
   "data": {
     "id": "uuid",
     "username": "Habib",
-    "password": "rahasia",
     "name": "Muhammad Habib",
     "email": "habib@example.com",
     "isAccountVerified": false,
@@ -249,6 +248,7 @@ Endpoint : POST /api/users/send-verify-email-otp
 
 Request Header :
 
+Content-Type: application/json
 Cookie: token= jwt
 
 Response Body (Success) :
