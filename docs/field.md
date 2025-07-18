@@ -8,8 +8,9 @@ Endpoint : POST /api/field
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer <admin_token>
+- Content-Type: application/json
+- Cookie: token= jwt
 
 Request Body :
 
@@ -58,8 +59,9 @@ Endpoint : PATCH /api/field
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer <admin_token>
+- Content-Type: application/json
+- Cookie: token= jwt
 
 Request Body :
 
@@ -106,8 +108,8 @@ Endpoint : GET /api/field/:fieldId
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer token
+- Cookie: token= jwt
 
 Response Body (Success) :
 
@@ -148,8 +150,8 @@ Query Parameter :
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer token
+- Cookie: token= jwt
 
 Response Body (Success) :
 
@@ -201,8 +203,8 @@ Endpoint : DELETE /api/field/:fieldId
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer token
+- Cookie: token= jwt
 
 Response Body (Success) :
 
