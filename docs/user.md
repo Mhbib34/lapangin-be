@@ -25,7 +25,6 @@ Response Body (Success) :
   "data": {
     "id": "uuid",
     "username": "Habib",
-    "password": "rahasia",
     "name": "Muhammad Habib",
     "email": "habib@example.com",
     "isAccountVerified": false,
@@ -59,17 +58,15 @@ Response Body (Success) :
 
 ```json
 {
-  "success":true,
-  "message":"User Login Successfully",
+  "success": true,
+  "message": "User Login Successfully",
   "data": {
-    "id":"uuid",
+    "id": "uuid",
     "username": "Habib",
     "name": "Muhammad Habib",
     "email": "habib@example.com",
-    "isAccountVerified": false,
+    "isAccountVerified": false
   }
-  "token":"jwt"
-
 }
 ```
 
@@ -120,6 +117,7 @@ Endpoint : PATCH /api/users
 
 Request Header :
 
+Content-Type: application/json
 Cookie: token= jwt
 
 Request Body :
@@ -249,6 +247,7 @@ Endpoint : POST /api/users/send-verify-email-otp
 
 Request Header :
 
+Content-Type: application/json
 Cookie: token= jwt
 
 Response Body (Success) :
@@ -274,6 +273,7 @@ Endpoint : PATCH /api/users/verify-email
 
 Request Header :
 
+Content-Type: application/json
 Cookie: token= jwt
 
 Request Body :
