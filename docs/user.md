@@ -85,7 +85,8 @@ Endpoint : GET /api/users
 
 Request Header :
 
-Cookie: token= jwt
+- Authorization: Bearer token
+- Cookie: token= jwt
 
 Response Body (Success) :
 
@@ -118,8 +119,9 @@ Endpoint : PATCH /api/users
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer token
+- Content-Type: application/json
+- Cookie: token= jwt
 
 Request Body :
 
@@ -163,7 +165,7 @@ Endpoint : DELETE /api/users
 
 Request Header :
 
-Cookie: token= jwt
+- Cookie: token= jwt
 
 Response Body (Success) :
 
@@ -185,6 +187,10 @@ Response Body (Failed) :
 ## Send Reset Password OTP
 
 Endpoint : POST /api/users/send-reset-password-otp
+
+Request Header :
+
+- Content-Type: application/json
 
 Request Body :
 
@@ -214,6 +220,10 @@ Response Body (Failed) :
 ## Reset User Password
 
 Endpoint : PATCH /api/users/reset-password
+
+Request Header :
+
+- Content-Type: application/json
 
 Request Body :
 
@@ -248,8 +258,9 @@ Endpoint : POST /api/users/send-verify-email-otp
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
+- Authorization: Bearer token
+- Content-Type: application/json
+- Cookie: token= jwt
 
 Response Body (Success) :
 
@@ -274,10 +285,10 @@ Endpoint : PATCH /api/users/verify-email
 
 Request Header :
 
-Content-Type: application/json
-Cookie: token= jwt
-
-Request Body :
+- Authorization: Bearer token
+- Content-Type: application/json
+- Cookie: token= jwt
+  Request Body :
 
 ```json
 {
