@@ -125,10 +125,10 @@ Request Body :
 
 ```json
 {
-  "username": "Habib", //tidak wajib
-  "password": "rahasia", //tidak wajib
-  "name": "Muhammad Habib", //tidak wajib
-  "email": "habib@example.com" //tidak wajib
+  "username": "Habib", //not required
+  "password": "rahasia", //not required
+  "name": "Muhammad Habib", //not required
+  "email": "habib@example.com" //not required
 }
 ```
 
