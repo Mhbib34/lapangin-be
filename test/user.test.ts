@@ -151,3 +151,60 @@ describe("GET /api/users", () => {
     expect(res.body.errors).toBeDefined();
   });
 });
+
+describe("PATCH /api/users", () => {
+  let token: string;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+  });
+
+  it("should can update user", async () => {
+    const res = await supertest(web)
+      .patch("/api/users")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        name: "test update",
+        password: "rahasia baru",
+        username: "test baru",
+      });
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.data.id).toBeDefined();
+    expect(res.body.data.username).toEqual("test baru");
+    expect(res.body.data.name).toEqual("test update");
+    expect(res.body.data.role).toEqual("USER");
+  });
+
+  it("should reject update user if token is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users")
+      .set("Cookie", [`token=invalid_token`])
+      .send({
+        name: "test update",
+        password: "rahasia baru",
+        username: "test baru",
+      });
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject update user if body is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        name: "",
+        password: "",
+        username: "",
+      });
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+  });
+});

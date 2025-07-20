@@ -7,3 +7,4 @@ export const UserRouter = express.Router();
 UserRouter.post("/", UserController.create);
 UserRouter.post("/login", UserController.login);
 UserRouter.get("/", userAuth, UserController.get);
+UserRouter.patch("/", userAuth, UserController.update);
