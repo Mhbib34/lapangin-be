@@ -360,3 +360,49 @@ describe("PATCH /api/users/reset-password", () => {
     expect(res.body.errors).toBeDefined();
   });
 });
+
+describe("POST /api/users/verify-otp", () => {
+  let token: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+  });
+
+  it("should can send verify otp", async () => {
+    const res = await supertest(web)
+      .post("/api/users/verify-otp")
+      .set("Cookie", [`token=${token}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject send verify otp if token is invalid", async () => {
+    const res = await supertest(web)
+      .post("/api/users/verify-otp")
+      .set("Cookie", [`token=invalid_token`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject send verify otp if otp has sent before", async () => {
+    await supertest(web)
+      .post("/api/users/verify-otp")
+      .set("Cookie", [`token=${token}`]);
+
+    const res = await supertest(web)
+      .post("/api/users/verify-otp")
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+    expect(res.body.errors).toBeDefined();
+  });
+});

@@ -89,8 +89,8 @@ export class UserController {
       const mailOption = {
         from: process.env.SENDER_EMAIL,
         to: userUpdate.email,
-        subject: `Account Verify OTP!`,
-        html: otpEmailTemplate(userUpdate.name, otp, "verify your email"),
+        subject: `Reset Password OTP!`,
+        html: otpEmailTemplate(userUpdate.name, otp, "reset your password"),
       };
       await transporter.sendMail(mailOption);
       res.status(200).json({
@@ -113,6 +113,25 @@ export class UserController {
       res.status(200).json({
         success: true,
         message: "Update password successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async verifyOtp(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const { otp, userUpdate } = await UserService.verifyOtp(req.user!);
+      const mailOption = {
+        from: process.env.SENDER_EMAIL,
+        to: userUpdate.email,
+        subject: `Account Verify OTP!`,
+        html: otpEmailTemplate(userUpdate.name, otp, "verify your email"),
+      };
+      await transporter.sendMail(mailOption);
+      res.status(200).json({
+        success: true,
+        message: "OTP has sent to your email",
       });
     } catch (error) {
       next(error);
