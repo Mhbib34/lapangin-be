@@ -5,6 +5,7 @@ import {
   ResetPasswordRequest,
   SendResetPWOtpRequest,
   UpdateUserRequest,
+  VerifyEmailRequest,
 } from "../model/user-model";
 import { UserService } from "../service/user-service";
 import jwt from "jsonwebtoken";
@@ -132,6 +133,23 @@ export class UserController {
       res.status(200).json({
         success: true,
         message: "OTP has sent to your email",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async verifyEmail(
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: VerifyEmailRequest = req.body as VerifyEmailRequest;
+      await UserService.verifyEmail(req.user!, request);
+      res.status(200).json({
+        success: true,
+        message: "Verify email successfully",
       });
     } catch (error) {
       next(error);

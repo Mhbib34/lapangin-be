@@ -5,6 +5,7 @@ import {
   ResetPasswordRequest,
   SendResetPWOtpRequest,
   UpdateUserRequest,
+  VerifyEmailRequest,
 } from "../model/user-model";
 
 export class UserValidation {
@@ -32,6 +33,9 @@ export class UserValidation {
   static readonly RESET_PASSWORD: ZodType<ResetPasswordRequest> = z.object({
     email: z.string().email().min(1).max(100),
     newPassword: z.string().min(1).max(100),
+    otp: z.number().positive(),
+  });
+  static readonly VERIFY_EMAIL: ZodType<VerifyEmailRequest> = z.object({
     otp: z.number().positive(),
   });
 }

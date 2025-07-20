@@ -9,6 +9,7 @@ import {
   toUserResponse,
   UpdateUserRequest,
   UserResponse,
+  VerifyEmailRequest,
 } from "../model/user-model";
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
@@ -177,5 +178,37 @@ export class UserService {
       },
     });
     return { otp, userUpdate };
+  }
+
+  static async verifyEmail(
+    user: User,
+    request: VerifyEmailRequest
+  ): Promise<UserResponse> {
+    const userRequest = Validation.validate(
+      UserValidation.VERIFY_EMAIL,
+      request
+    );
+    const findUser = await prismaClient.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (!findUser) throw new ResponseError(404, "Email not found");
+    if (findUser.verifyOtp !== userRequest.otp)
+      throw new ResponseError(400, "Invalid OTP");
+    if (findUser.verifyOtpExpireAt! < new Date())
+      throw new ResponseError(400, "OTP Expired");
+    const userUpdate = await prismaClient.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isAccountVerified: true,
+        verifyOtp: null,
+        verifyOtpExpireAt: null,
+      },
+    });
+    return toUserResponse(userUpdate);
   }
 }

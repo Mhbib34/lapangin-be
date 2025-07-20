@@ -56,4 +56,17 @@ export class UserTest {
     });
     return user?.resetOtp;
   }
+  static async getVerifyOtp() {
+    const token = await loginAndGetToken();
+    await supertest(web)
+      .post("/api/users/verify-otp")
+      .set("Cookie", [`token=${token}`]);
+
+    const user = await prismaClient.user.findUnique({
+      where: {
+        email: "test@example.com",
+      },
+    });
+    return user?.verifyOtp;
+  }
 }
