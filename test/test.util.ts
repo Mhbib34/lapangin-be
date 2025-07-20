@@ -1,5 +1,26 @@
+import supertest from "supertest";
 import { prismaClient } from "../src/config/database";
 import bcrypt from "bcrypt";
+import { web } from "../src/config/web";
+
+export async function loginAndGetToken(): Promise<string> {
+  const loginRes = await supertest(web).post("/api/users/login").send({
+    email: "test@example.com",
+    password: "rahasia",
+  });
+
+  const cookies = loginRes.headers["set-cookie"];
+  if (!Array.isArray(cookies)) {
+    throw new Error("Expected cookies to be an array");
+  }
+
+  const cookie = cookies.find((c: string) => c.startsWith("token="));
+  if (!cookie) {
+    throw new Error("Expected token cookie to exist");
+  }
+
+  return cookie.split("=")[1].split(";")[0];
+}
 export class UserTest {
   static async deleteAll() {
     await prismaClient.user.deleteMany({
