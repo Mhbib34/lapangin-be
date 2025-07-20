@@ -137,8 +137,8 @@ Response Body (Success) :
 
 ```json
 {
-  "success":true
-  "message":"Update User Successfully",
+  "success": true,
+  "message": "Update User Successfully",
   "data": {
     "id": "uuid",
     "username": "Habib",

@@ -7,6 +7,13 @@ export type CreateUserRequest = {
   email: string;
   role?: Role;
 };
+export type UpdateUserRequest = {
+  username?: string;
+  password?: string;
+  name?: string;
+  email?: string;
+  role?: Role;
+};
 export type LoginUserRequest = {
   password: string;
   email: string;
