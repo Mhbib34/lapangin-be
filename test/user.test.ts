@@ -2,7 +2,6 @@ import supertest from "supertest";
 import { web } from "../src/config/web";
 import { logger } from "../src/config/logging";
 import { loginAndGetToken, UserTest } from "./test.util";
-import { email } from "zod";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
