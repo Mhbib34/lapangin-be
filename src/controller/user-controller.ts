@@ -78,4 +78,17 @@ export class UserController {
       next(error);
     }
   }
+
+  static async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      });
+      return res.status(200).json(UserService.logout());
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -208,3 +208,34 @@ describe("PATCH /api/users", () => {
     expect(res.status).toEqual(400);
   });
 });
+
+describe("DELETE /api/users", () => {
+  let token: string;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+  });
+
+  it("should can logout user", async () => {
+    const res = await supertest(web)
+      .delete("/api/users")
+      .set("Cookie", [`token=${token}`]);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.success).toEqual(true);
+    expect(res.body.message).toEqual("User Logout successfully");
+  });
+  it("should reject logout user if token is invalid", async () => {
+    const res = await supertest(web)
+      .delete("/api/users")
+      .set("Cookie", [`token=invalid_token`]);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+});

@@ -71,4 +71,8 @@ export class UserService {
     });
     return toUserResponse(userUpdate);
   }
+
+  static logout() {
+    return { success: true, message: "User Logout successfully" };
+  }
 }

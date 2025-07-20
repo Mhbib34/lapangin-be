@@ -8,3 +8,4 @@ UserRouter.post("/", UserController.create);
 UserRouter.post("/login", UserController.login);
 UserRouter.get("/", userAuth, UserController.get);
 UserRouter.patch("/", userAuth, UserController.update);
+UserRouter.delete("/", userAuth, UserController.logout);
