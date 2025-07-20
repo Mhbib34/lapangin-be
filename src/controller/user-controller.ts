@@ -8,9 +8,11 @@ import {
   VerifyEmailRequest,
 } from "../model/user-model";
 import { UserService } from "../service/user-service";
-import jwt from "jsonwebtoken";
 import { UserRequest } from "../type/user-request";
-import { otpEmailTemplate } from "../config/email-template";
+import {
+  otpEmailTemplate,
+  welcomeEmailTemplate,
+} from "../config/email-template";
 import transporter from "../config/nodemailer";
 import { JwtUtils } from "../utils/jwt";
 
@@ -19,6 +21,13 @@ export class UserController {
     try {
       const request: CreateUserRequest = req.body as CreateUserRequest;
       const result = await UserService.create(request);
+      const mailOption = {
+        from: process.env.SENDER_EMAIL,
+        to: result.email,
+        subject: `Welcome ${result.name}!`,
+        html: welcomeEmailTemplate(result.email, result.name),
+      };
+      await transporter.sendMail(mailOption);
       res.status(201).json({
         success: true,
         message: "Created User Successfully",
