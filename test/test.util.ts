@@ -40,4 +40,20 @@ export class UserTest {
       },
     });
   }
+
+  static async getresetOtp() {
+    const token = await loginAndGetToken();
+    await supertest(web)
+      .post("/api/users/reset-otp")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        email: "test@example.com",
+      });
+    const user = await prismaClient.user.findUnique({
+      where: {
+        email: "test@example.com",
+      },
+    });
+    return user?.resetOtp;
+  }
 }

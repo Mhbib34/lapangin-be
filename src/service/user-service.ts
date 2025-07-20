@@ -4,6 +4,7 @@ import { ResponseError } from "../error/response-error";
 import {
   CreateUserRequest,
   LoginUserRequest,
+  ResetPasswordRequest,
   SendResetPWOtpRequest,
   toUserResponse,
   UpdateUserRequest,
@@ -103,5 +104,48 @@ export class UserService {
     });
 
     return { otp, userUpdate };
+  }
+
+  static async resetPassword(
+    user: User,
+    request: ResetPasswordRequest
+  ): Promise<UserResponse> {
+    const userRequest = Validation.validate(
+      UserValidation.RESET_PASSWORD,
+      request
+    );
+    const findUser = await prismaClient.user.findUnique({
+      where: {
+        email: userRequest.email,
+      },
+    });
+
+    if (!findUser) throw new ResponseError(404, "Email not found");
+
+    if (findUser.resetOtp !== userRequest.otp)
+      throw new ResponseError(400, "Invalid OTP");
+    if (findUser.resetOtpExpireAt! < new Date())
+      throw new ResponseError(400, "OTP Expired");
+
+    const isPasswordSame = await bcrypt.compare(
+      userRequest.newPassword,
+      user.password
+    );
+
+    if (isPasswordSame)
+      throw new ResponseError(400, "Password cannot be same as old password");
+
+    const newPassword = await bcrypt.hash(userRequest.newPassword, 10);
+    const userUpdate = await prismaClient.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: newPassword,
+        resetOtp: null,
+        resetOtpExpireAt: null,
+      },
+    });
+    return toUserResponse(userUpdate);
   }
 }

@@ -10,3 +10,4 @@ UserRouter.get("/", userAuth, UserController.get);
 UserRouter.patch("/", userAuth, UserController.update);
 UserRouter.delete("/", userAuth, UserController.logout);
 UserRouter.post("/reset-otp", userAuth, UserController.resetOtp);
+UserRouter.patch("/reset-password", userAuth, UserController.resetPassword);

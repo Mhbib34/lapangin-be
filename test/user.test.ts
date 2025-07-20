@@ -287,3 +287,76 @@ describe("POST /api/users/reset-otp", () => {
     expect(res.body.errors).toBeDefined();
   });
 });
+
+describe("PATCH /api/users/reset-password", () => {
+  let token: string;
+  let otp: number;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+    otp = (await UserTest.getresetOtp())!;
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+  });
+
+  it("should can reset password", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/reset-password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        email: "test@example.com",
+        otp,
+        newPassword: "rahasia baru",
+      });
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject reset password if token is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/reset-password")
+      .set("Cookie", [`token=invalid_token`])
+      .send({
+        email: "test@example.com",
+        otp,
+        newPassword: "rahasia baru",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject reset password if request body is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/reset-password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        email: "test@example.com",
+        otp,
+        newPassword: "",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+    expect(res.body.errors).toBeDefined();
+  });
+  it("should reject reset password if otp is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/reset-password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        email: "test@example.com",
+        otp: otp + 1,
+        newPassword: "rahasia baru",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+    expect(res.body.errors).toBeDefined();
+  });
+});

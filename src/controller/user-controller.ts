@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   CreateUserRequest,
   LoginUserRequest,
+  ResetPasswordRequest,
   SendResetPWOtpRequest,
   UpdateUserRequest,
 } from "../model/user-model";
@@ -10,6 +11,7 @@ import jwt from "jsonwebtoken";
 import { UserRequest } from "../type/user-request";
 import { otpEmailTemplate } from "../config/email-template";
 import transporter from "../config/nodemailer";
+import { JwtUtils } from "../utils/jwt";
 
 export class UserController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -30,21 +32,7 @@ export class UserController {
     try {
       const request: LoginUserRequest = req.body as LoginUserRequest;
       const result = await UserService.login(request);
-      const token = jwt.sign(
-        {
-          id: result.id,
-          email: result.email,
-        },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "7d" }
-      );
-
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+      JwtUtils.generateToken(res, result);
       res.status(200).json({
         success: true,
         message: "User Login Successfully",
@@ -84,11 +72,7 @@ export class UserController {
 
   static async logout(req: Request, res: Response, next: NextFunction) {
     try {
-      res.clearCookie("token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      });
+      JwtUtils.clearToken(res);
       return res.status(200).json(UserService.logout());
     } catch (error) {
       next(error);
@@ -112,6 +96,23 @@ export class UserController {
       res.status(200).json({
         success: true,
         message: "OTP has sent to your email",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async resetPassword(
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: ResetPasswordRequest = req.body as ResetPasswordRequest;
+      await UserService.resetPassword(req.user!, request);
+      JwtUtils.clearToken(res);
+      res.status(200).json({
+        success: true,
+        message: "Update password successfully",
       });
     } catch (error) {
       next(error);
