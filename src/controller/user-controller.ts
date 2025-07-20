@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CreateUserRequest, LoginUserRequest } from "../model/user-model";
 import { UserService } from "../service/user-service";
 import jwt from "jsonwebtoken";
-import id from "zod/v4/locales/id.cjs";
+import { UserRequest } from "../type/user-request";
 
 export class UserController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -41,6 +41,19 @@ export class UserController {
       res.status(200).json({
         success: true,
         message: "User Login Successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async get(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await UserService.get(req.user!);
+      res.status(200).json({
+        success: true,
+        message: "Get User Successfully",
         data: result,
       });
     } catch (error) {

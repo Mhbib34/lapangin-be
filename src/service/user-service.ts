@@ -11,6 +11,7 @@ import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt";
 import { logger } from "../config/logging";
+import { User } from "@prisma/client";
 
 export class UserService {
   static async create(request: CreateUserRequest): Promise<UserResponse> {
@@ -47,6 +48,10 @@ export class UserService {
     if (!isPasswordMatch)
       throw new ResponseError(401, "Email or Password wrong");
 
+    return toUserResponse(user);
+  }
+
+  static async get(user: User): Promise<UserResponse> {
     return toUserResponse(user);
   }
 }
