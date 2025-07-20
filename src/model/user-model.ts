@@ -21,6 +21,12 @@ export type LoginUserRequest = {
 export type SendResetPWOtpRequest = {
   email: string;
 };
+
+export type ResetPasswordRequest = {
+  newPassword: string;
+  otp: number;
+  email: string;
+};
 export type UserResponse = {
   id: string;
   username: string;
