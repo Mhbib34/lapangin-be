@@ -2,11 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import {
   CreateUserRequest,
   LoginUserRequest,
+  SendResetPWOtpRequest,
   UpdateUserRequest,
 } from "../model/user-model";
 import { UserService } from "../service/user-service";
 import jwt from "jsonwebtoken";
 import { UserRequest } from "../type/user-request";
+import { otpEmailTemplate } from "../config/email-template";
+import transporter from "../config/nodemailer";
 
 export class UserController {
   static async create(req: Request, res: Response, next: NextFunction) {
@@ -87,6 +90,29 @@ export class UserController {
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       });
       return res.status(200).json(UserService.logout());
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetOtp(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const request: SendResetPWOtpRequest = req.body as SendResetPWOtpRequest;
+      const { otp, userUpdate } = await UserService.resetOtp(
+        req.user!,
+        request
+      );
+      const mailOption = {
+        from: process.env.SENDER_EMAIL,
+        to: userUpdate.email,
+        subject: `Account Verify OTP!`,
+        html: otpEmailTemplate(userUpdate.name, otp, "verify your email"),
+      };
+      await transporter.sendMail(mailOption);
+      res.status(200).json({
+        success: true,
+        message: "OTP has sent to your email",
+      });
     } catch (error) {
       next(error);
     }

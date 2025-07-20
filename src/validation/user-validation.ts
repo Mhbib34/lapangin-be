@@ -2,6 +2,7 @@ import z, { ZodType } from "zod";
 import {
   CreateUserRequest,
   LoginUserRequest,
+  SendResetPWOtpRequest,
   UpdateUserRequest,
 } from "../model/user-model";
 
@@ -22,6 +23,9 @@ export class UserValidation {
   });
   static readonly LOGIN: ZodType<LoginUserRequest> = z.object({
     password: z.string().min(1).max(100),
+    email: z.string().email().min(1).max(100),
+  });
+  static readonly RESET_PW_OTP: ZodType<SendResetPWOtpRequest> = z.object({
     email: z.string().email().min(1).max(100),
   });
 }

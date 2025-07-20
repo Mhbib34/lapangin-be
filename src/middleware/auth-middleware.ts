@@ -56,8 +56,6 @@ export const userAuth = async (
       }
 
       req.user = user;
-
-      console.log("✅ User authenticated:", req.user);
     } else {
       throw new ResponseError(401, "Not authorized, Login again");
     }
