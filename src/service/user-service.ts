@@ -89,6 +89,9 @@ export class UserService {
       },
     });
 
+    if (findUser?.resetOtpExpireAt && findUser.resetOtpExpireAt > new Date())
+      throw new ResponseError(400, "OTP already sent");
+
     if (!findUser) throw new ResponseError(404, "Email not found");
 
     const otp = Math.floor(100000 + Math.random() * 900000);
