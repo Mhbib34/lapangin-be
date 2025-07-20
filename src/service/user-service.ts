@@ -95,7 +95,7 @@ export class UserService {
     if (!findUser) throw new ResponseError(404, "Email not found");
 
     const otp = Math.floor(100000 + Math.random() * 900000);
-    logger.info(`OTP: ${otp}`);
+
     const userUpdate = await prismaClient.user.update({
       where: {
         id: user.id,
@@ -150,5 +150,32 @@ export class UserService {
       },
     });
     return toUserResponse(userUpdate);
+  }
+
+  static async verifyOtp(user: User) {
+    const findUser = await prismaClient.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (!findUser) throw new ResponseError(404, "Email not found");
+    if (findUser.verifyOtp || findUser.verifyOtpExpireAt)
+      throw new ResponseError(400, "OTP already sent");
+    if (findUser.isAccountVerified)
+      throw new ResponseError(400, "Account already verified");
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    const userUpdate = await prismaClient.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        verifyOtp: otp,
+        verifyOtpExpireAt: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    });
+    return { otp, userUpdate };
   }
 }
