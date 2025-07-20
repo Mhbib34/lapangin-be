@@ -27,6 +27,9 @@ export type ResetPasswordRequest = {
   otp: number;
   email: string;
 };
+export type VerifyEmailRequest = {
+  otp: number;
+};
 export type UserResponse = {
   id: string;
   username: string;

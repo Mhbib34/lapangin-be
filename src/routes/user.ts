@@ -12,3 +12,4 @@ UserRouter.delete("/", userAuth, UserController.logout);
 UserRouter.post("/reset-otp", userAuth, UserController.resetOtp);
 UserRouter.patch("/reset-password", userAuth, UserController.resetPassword);
 UserRouter.post("/verify-otp", userAuth, UserController.verifyOtp);
+UserRouter.patch("/verify-email", userAuth, UserController.verifyEmail);
