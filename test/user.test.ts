@@ -2,6 +2,7 @@ import supertest from "supertest";
 import { web } from "../src/config/web";
 import { logger } from "../src/config/logging";
 import { loginAndGetToken, UserTest } from "./test.util";
+import { email } from "zod";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
@@ -236,6 +237,53 @@ describe("DELETE /api/users", () => {
       .set("Cookie", [`token=invalid_token`]);
     console.log(res.body);
     expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+});
+
+describe("POST /api/users/reset-otp", () => {
+  let token: string;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+  });
+
+  it("should can send reset password otp", async () => {
+    const res = await supertest(web)
+      .post("/api/users/reset-otp")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        email: "test@example.com",
+      });
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject send reset password otp if token is invalid", async () => {
+    const res = await supertest(web)
+      .post("/api/users/reset-otp")
+      .set("Cookie", [`token=invalid_token`])
+      .send({
+        email: "test@example.com",
+      });
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+  it("should reject send reset password otp if request body is invalid", async () => {
+    const res = await supertest(web)
+      .post("/api/users/reset-otp")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        email: "",
+      });
+    console.log(res.body);
+    expect(res.status).toEqual(400);
     expect(res.body.errors).toBeDefined();
   });
 });

@@ -18,6 +18,9 @@ export type LoginUserRequest = {
   password: string;
   email: string;
 };
+export type SendResetPWOtpRequest = {
+  email: string;
+};
 export type UserResponse = {
   id: string;
   username: string;

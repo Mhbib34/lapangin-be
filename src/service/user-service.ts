@@ -4,6 +4,7 @@ import { ResponseError } from "../error/response-error";
 import {
   CreateUserRequest,
   LoginUserRequest,
+  SendResetPWOtpRequest,
   toUserResponse,
   UpdateUserRequest,
   UserResponse,
@@ -74,5 +75,33 @@ export class UserService {
 
   static logout() {
     return { success: true, message: "User Logout successfully" };
+  }
+
+  static async resetOtp(user: User, request: SendResetPWOtpRequest) {
+    const userRequest = Validation.validate(
+      UserValidation.RESET_PW_OTP,
+      request
+    );
+    const findUser = await prismaClient.user.findUnique({
+      where: {
+        email: userRequest.email,
+      },
+    });
+
+    if (!findUser) throw new ResponseError(404, "Email not found");
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    logger.info(`OTP: ${otp}`);
+    const userUpdate = await prismaClient.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        resetOtp: otp,
+        resetOtpExpireAt: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    });
+
+    return { otp, userUpdate };
   }
 }
