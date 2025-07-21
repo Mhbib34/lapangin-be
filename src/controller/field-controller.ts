@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateFieldRequest } from "../model/field-model";
+import { CreateFieldRequest, UpdateFieldRequest } from "../model/field-model";
 import { FieldService } from "../service/field-service";
 
 export class FieldController {
@@ -14,6 +14,24 @@ export class FieldController {
       res.status(201).json({
         success: true,
         message: "Create field successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request: UpdateFieldRequest = {
+        ...req.body,
+        pricePerHour: Number(req.body.pricePerHour),
+        image: req.file?.path,
+      };
+      request.id = req.params.fieldId;
+      const result = await FieldService.update(request.id, request);
+      res.status(200).json({
+        success: true,
+        message: "Update field successfully",
         data: result,
       });
     } catch (error) {

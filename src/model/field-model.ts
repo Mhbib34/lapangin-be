@@ -8,6 +8,15 @@ export type CreateFieldRequest = {
   pricePerHour: number;
   category: string;
 };
+export type UpdateFieldRequest = {
+  fieldId: string;
+  name?: string;
+  location?: string;
+  description?: string;
+  image?: string;
+  pricePerHour?: number;
+  category?: string;
+};
 
 export type FieldResponse = {
   id: string;

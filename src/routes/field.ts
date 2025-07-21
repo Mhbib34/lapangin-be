@@ -6,3 +6,9 @@ import { userAuth } from "../middleware/auth-middleware";
 export const FieldRouter = express.Router();
 
 FieldRouter.post("/", userAuth, upload.single("image"), FieldController.create);
+FieldRouter.patch(
+  "/:fieldId",
+  userAuth,
+  upload.single("image"),
+  FieldController.update
+);
