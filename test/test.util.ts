@@ -70,3 +70,13 @@ export class UserTest {
     return user?.verifyOtp;
   }
 }
+
+export class FieldTest {
+  static async deleteAll() {
+    await prismaClient.field.deleteMany({
+      where: {
+        name: "lapangan Futsal A",
+      },
+    });
+  }
+}

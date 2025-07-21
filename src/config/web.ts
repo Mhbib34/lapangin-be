@@ -3,6 +3,7 @@ import { UserRouter } from "../routes/user";
 import { errorMiddleware } from "../middleware/error-middleware";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { FieldRouter } from "../routes/field";
 
 const allowedOrigins = ["http://localhost:3000", "http://localhost:8000"];
 
@@ -13,5 +14,6 @@ web.use(cors({ origin: allowedOrigins, credentials: true }));
 web.use(cookieParser());
 
 web.use("/api/users", UserRouter);
+web.use("/api/fields", FieldRouter);
 
 web.use(errorMiddleware);
