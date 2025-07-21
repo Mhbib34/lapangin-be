@@ -62,3 +62,48 @@ describe("POST /api/fields", () => {
     expect(res.status).toEqual(400);
   });
 });
+
+describe("PATCH /api/fields/:fieldId", () => {
+  let token: string;
+  let id: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+    id = await FieldTest.createField();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+    await FieldTest.deleteAll();
+  });
+
+  it("should can update field", async () => {
+    const res = await supertest(web)
+      .patch(`/api/fields/${id}`)
+      .set("Cookie", [`token=${token}`])
+      .field("name", "lapangan Futsal A")
+      .field("location", "Jalan Merdeka asda")
+      .field("description", "Lapangan Futsal A Ini asdads")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal");
+    // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  }, 15000);
+
+  it("should reject update field if token is invalid", async () => {
+    const res = await supertest(web)
+      .patch(`/api/fields/${id}`)
+      .set("Cookie", [`token=invalid_token`])
+      .field("name", "lapangan Futsal A")
+      .field("location", "Jalan Merdeka asda")
+      .field("description", "Lapangan Futsal A Ini asdads")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal");
+    // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+});

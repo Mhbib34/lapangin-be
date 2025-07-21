@@ -55,7 +55,7 @@ Response Body (Failed) :
 
 ### Admin Only
 
-Endpoint : PATCH /api/field
+Endpoint : PATCH /api/field/:fieldId
 
 Request Header :
 

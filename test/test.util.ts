@@ -2,6 +2,7 @@ import supertest from "supertest";
 import { prismaClient } from "../src/config/database";
 import bcrypt from "bcrypt";
 import { web } from "../src/config/web";
+import path from "path";
 
 export async function loginAndGetToken(): Promise<string> {
   const loginRes = await supertest(web).post("/api/users/login").send({
@@ -78,5 +79,27 @@ export class FieldTest {
         name: "lapangan Futsal A",
       },
     });
+  }
+
+  static async createField() {
+    const field = await prismaClient.field.create({
+      data: {
+        name: "lapangan Futsal A",
+        location: "Jalan Merdeka",
+        description: "Lapangan Futsal A Ini",
+        pricePerHour: 200000,
+        category: {
+          connectOrCreate: {
+            where: {
+              name: "Futsal",
+            },
+            create: {
+              name: "Futsal",
+            },
+          },
+        },
+      },
+    });
+    return field.id;
   }
 }
