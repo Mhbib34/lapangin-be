@@ -1,0 +1,64 @@
+import supertest from "supertest";
+import { FieldTest, loginAndGetToken, UserTest } from "./test.util";
+import { web } from "../src/config/web";
+import { logger } from "../src/config/logging";
+import path from "path";
+
+describe("POST /api/fields", () => {
+  let token: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+    await FieldTest.deleteAll();
+  });
+
+  it("should can create field", async () => {
+    const res = await supertest(web)
+      .post("/api/fields")
+      .set("Cookie", [`token=${token}`])
+      .field("name", "lapangan Futsal A")
+      .field("location", "Jalan Merdeka")
+      .field("description", "Lapangan Futsal A Ini")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal")
+      .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(201);
+  }, 15000);
+
+  it("should reject create field if token is invalid", async () => {
+    const res = await supertest(web)
+      .post("/api/fields")
+      .set("Cookie", [`token=invalid_token`])
+      .field("name", "lapangan Futsal A")
+      .field("location", "Jalan Merdeka")
+      .field("description", "Lapangan Futsal A Ini")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal")
+      .attach("image", ""); // pastikan file ada
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should reject create field if request body is invalid", async () => {
+    const res = await supertest(web)
+      .post("/api/fields")
+      .set("Cookie", [`token=${token}`])
+      .field("name", "")
+      .field("location", "Jalan Merdeka")
+      .field("description", "Lapangan Futsal A Ini")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal")
+      .attach("image", "");
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+  });
+});
