@@ -9,7 +9,7 @@ export type CreateFieldRequest = {
   category: string;
 };
 export type UpdateFieldRequest = {
-  fieldId: string;
+  id: string;
   name?: string;
   location?: string;
   description?: string;
@@ -26,6 +26,14 @@ export type FieldResponse = {
   image?: string | null;
   pricePerHour: number;
   category: string;
+};
+
+export type SearchFieldRequest = {
+  name?: string;
+  location?: string;
+  category?: string;
+  page: number;
+  size: number;
 };
 
 export function toFieldResponse(

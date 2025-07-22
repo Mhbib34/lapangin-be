@@ -198,3 +198,88 @@ describe("DELETE /api/fields/:fieldId", () => {
     expect(res.status).toEqual(404);
   });
 });
+
+describe("GET /api/fields", () => {
+  let token: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+    await FieldTest.createField();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+    await FieldTest.deleteAll();
+  });
+
+  it("should can get fields", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields`)
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.data[0].id).toBeDefined();
+    expect(res.body.data[0].name).toEqual("lapangan Futsal A");
+    expect(res.body.data[0].location).toEqual("Jalan Merdeka");
+    expect(res.body.data[0].description).toEqual("Lapangan Futsal A Ini");
+    expect(res.body.data[0].pricePerHour).toEqual(200000);
+    expect(res.body.data[0].category).toEqual("Futsal");
+  });
+
+  it("should reject get fields if token is invalid", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields`)
+      .set("Cookie", [`token=invalid_token`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should can get contacts with query params name", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields?name=lapangan Futsal A`)
+      .set("Cookie", [`token=${token}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.data[0].id).toBeDefined();
+    expect(res.body.data[0].name).toEqual("lapangan Futsal A");
+    expect(res.body.data[0].location).toEqual("Jalan Merdeka");
+    expect(res.body.data[0].description).toEqual("Lapangan Futsal A Ini");
+    expect(res.body.data[0].pricePerHour).toEqual(200000);
+    expect(res.body.data[0].category).toEqual("Futsal");
+  });
+  it("should can get contacts with query params location", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields?location=Jalan Merdeka`)
+      .set("Cookie", [`token=${token}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.data[0].id).toBeDefined();
+    expect(res.body.data[0].name).toEqual("lapangan Futsal A");
+    expect(res.body.data[0].location).toEqual("Jalan Merdeka");
+    expect(res.body.data[0].description).toEqual("Lapangan Futsal A Ini");
+    expect(res.body.data[0].pricePerHour).toEqual(200000);
+    expect(res.body.data[0].category).toEqual("Futsal");
+  });
+
+  it("should can get contacts with query params category", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields?category=Futsal`)
+      .set("Cookie", [`token=${token}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.data[0].id).toBeDefined();
+    expect(res.body.data[0].name).toEqual("lapangan Futsal A");
+    expect(res.body.data[0].location).toEqual("Jalan Merdeka");
+    expect(res.body.data[0].description).toEqual("Lapangan Futsal A Ini");
+    expect(res.body.data[0].pricePerHour).toEqual(200000);
+    expect(res.body.data[0].category).toEqual("Futsal");
+  });
+});

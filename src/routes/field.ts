@@ -14,3 +14,4 @@ FieldRouter.patch(
 );
 FieldRouter.get("/:fieldId", userAuth, FieldController.get);
 FieldRouter.delete("/:fieldId", userAuth, FieldController.remove);
+FieldRouter.get("/", userAuth, FieldController.search);
