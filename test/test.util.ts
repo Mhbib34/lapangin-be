@@ -22,11 +22,38 @@ export async function loginAndGetToken(): Promise<string> {
 
   return cookie.split("=")[1].split(";")[0];
 }
+
+export async function loginAndGetTokenAdmin(): Promise<string> {
+  const loginRes = await supertest(web).post("/api/users/login").send({
+    email: "admin@example.com",
+    password: "rahasia admin",
+  });
+
+  const cookies = loginRes.headers["set-cookie"];
+  if (!Array.isArray(cookies)) {
+    throw new Error("Expected cookies to be an array");
+  }
+
+  const cookie = cookies.find((c: string) => c.startsWith("token="));
+  if (!cookie) {
+    throw new Error("Expected token cookie to exist");
+  }
+
+  return cookie.split("=")[1].split(";")[0];
+}
 export class UserTest {
   static async deleteAll() {
     await prismaClient.user.deleteMany({
       where: {
         email: "test@example.com",
+      },
+    });
+  }
+
+  static async deleteAllAdmin() {
+    await prismaClient.user.deleteMany({
+      where: {
+        email: "admin@example.com",
       },
     });
   }
@@ -69,6 +96,18 @@ export class UserTest {
       },
     });
     return user?.verifyOtp;
+  }
+
+  static async createUserAdmin() {
+    await prismaClient.user.create({
+      data: {
+        username: "admin",
+        password: await bcrypt.hash("rahasia admin", 10),
+        name: "admin",
+        email: "admin@example.com",
+        role: "ADMIN",
+      },
+    });
   }
 }
 

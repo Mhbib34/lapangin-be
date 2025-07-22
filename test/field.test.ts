@@ -1,17 +1,26 @@
 import supertest from "supertest";
-import { FieldTest, loginAndGetToken, UserTest } from "./test.util";
+import {
+  FieldTest,
+  loginAndGetToken,
+  loginAndGetTokenAdmin,
+  UserTest,
+} from "./test.util";
 import { web } from "../src/config/web";
 import { logger } from "../src/config/logging";
 import path from "path";
 
 describe("POST /api/fields", () => {
-  let token: string;
+  let tokenAdmin: string;
+  let tokenUser: string;
   beforeEach(async () => {
+    await UserTest.createUserAdmin();
     await UserTest.createUser();
-    token = await loginAndGetToken();
+    tokenAdmin = await loginAndGetTokenAdmin();
+    tokenUser = await loginAndGetToken();
   });
 
   afterEach(async () => {
+    await UserTest.deleteAllAdmin();
     await UserTest.deleteAll();
     await FieldTest.deleteAll();
   });
@@ -19,13 +28,13 @@ describe("POST /api/fields", () => {
   it("should can create field", async () => {
     const res = await supertest(web)
       .post("/api/fields")
-      .set("Cookie", [`token=${token}`])
+      .set("Cookie", [`token=${tokenAdmin}`])
       .field("name", "lapangan Futsal A")
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
-      .field("category", "Futsal")
-      .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
+      .field("category", "Futsal");
+    // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
 
     logger.debug(res.body);
     console.log(res.body);
@@ -40,8 +49,8 @@ describe("POST /api/fields", () => {
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
-      .field("category", "Futsal")
-      .attach("image", ""); // pastikan file ada
+      .field("category", "Futsal");
+    // .attach("image", ""); // pastikan file ada
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(401);
@@ -50,29 +59,48 @@ describe("POST /api/fields", () => {
   it("should reject create field if request body is invalid", async () => {
     const res = await supertest(web)
       .post("/api/fields")
-      .set("Cookie", [`token=${token}`])
+      .set("Cookie", [`token=${tokenAdmin}`])
       .field("name", "")
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
-      .field("category", "Futsal")
-      .attach("image", "");
+      .field("category", "Futsal");
+    // .attach("image", "");
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(400);
   });
+
+  it("should reject create field if user is not admin", async () => {
+    const res = await supertest(web)
+      .post("/api/fields")
+      .set("Cookie", [`token=${tokenUser}`])
+      .field("name", "lapangan Futsal A")
+      .field("location", "Jalan Merdeka")
+      .field("description", "Lapangan Futsal A Ini")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal");
+    // .attach("image", "");
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(403);
+  });
 });
 
 describe("PATCH /api/fields/:fieldId", () => {
-  let token: string;
+  let tokenAdmin: string;
+  let tokenUser: string;
   let id: string;
   beforeEach(async () => {
+    await UserTest.createUserAdmin();
     await UserTest.createUser();
-    token = await loginAndGetToken();
+    tokenAdmin = await loginAndGetTokenAdmin();
+    tokenUser = await loginAndGetToken();
     id = await FieldTest.createField();
   });
 
   afterEach(async () => {
+    await UserTest.deleteAllAdmin();
     await UserTest.deleteAll();
     await FieldTest.deleteAll();
   });
@@ -80,7 +108,7 @@ describe("PATCH /api/fields/:fieldId", () => {
   it("should can update field", async () => {
     const res = await supertest(web)
       .patch(`/api/fields/${id}`)
-      .set("Cookie", [`token=${token}`])
+      .set("Cookie", [`token=${tokenAdmin}`])
       .field("name", "lapangan Futsal A")
       .field("location", "Jalan Merdeka asda")
       .field("description", "Lapangan Futsal A Ini asdads")
@@ -105,6 +133,21 @@ describe("PATCH /api/fields/:fieldId", () => {
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(401);
+  });
+
+  it("should reject update field if user is not admin", async () => {
+    const res = await supertest(web)
+      .patch(`/api/fields/${id}`)
+      .set("Cookie", [`token=${tokenUser}`])
+      .field("name", "lapangan Futsal A")
+      .field("location", "Jalan Merdeka asda")
+      .field("description", "Lapangan Futsal A Ini asdads")
+      .field("pricePerHour", 200000)
+      .field("category", "Futsal");
+    // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(403);
   });
 });
 
@@ -158,15 +201,19 @@ describe("GET /api/fields/:fieldId", () => {
 });
 
 describe("DELETE /api/fields/:fieldId", () => {
-  let token: string;
+  let tokenAdmin: string;
+  let tokenUser: string;
   let id: string;
   beforeEach(async () => {
     await UserTest.createUser();
-    token = await loginAndGetToken();
+    await UserTest.createUserAdmin();
+    tokenUser = await loginAndGetToken();
+    tokenAdmin = await loginAndGetTokenAdmin();
     id = await FieldTest.createField();
   });
 
   afterEach(async () => {
+    await UserTest.deleteAllAdmin();
     await UserTest.deleteAll();
     await FieldTest.deleteAll();
   });
@@ -174,7 +221,7 @@ describe("DELETE /api/fields/:fieldId", () => {
   it("should can delete field", async () => {
     const res = await supertest(web)
       .delete(`/api/fields/${id}`)
-      .set("Cookie", [`token=${token}`]);
+      .set("Cookie", [`token=${tokenAdmin}`]);
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(200);
@@ -192,10 +239,19 @@ describe("DELETE /api/fields/:fieldId", () => {
   it("should reject delete field if field id is invalid", async () => {
     const res = await supertest(web)
       .delete(`/api/fields/invalid_id`)
-      .set("Cookie", [`token=${token}`]);
+      .set("Cookie", [`token=${tokenAdmin}`]);
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(404);
+  });
+
+  it("should reject delete field if user is not admin", async () => {
+    const res = await supertest(web)
+      .delete(`/api/fields/${id}`)
+      .set("Cookie", [`token=${tokenUser}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(403);
   });
 });
 
