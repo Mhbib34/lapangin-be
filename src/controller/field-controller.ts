@@ -51,4 +51,15 @@ export class FieldController {
       next(error);
     }
   }
+  static async remove(req: Request, res: Response, next: NextFunction) {
+    try {
+      await FieldService.remove(req.params.fieldId);
+      res.status(200).json({
+        success: true,
+        message: "Remove field successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
