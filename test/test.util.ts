@@ -142,3 +142,13 @@ export class FieldTest {
     return field.id;
   }
 }
+
+export class BookingTest {
+  static async deleteAll(fieldId: string) {
+    await prismaClient.booking.deleteMany({
+      where: {
+        fieldId,
+      },
+    });
+  }
+}
