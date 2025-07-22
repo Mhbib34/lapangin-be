@@ -38,4 +38,17 @@ export class FieldController {
       next(error);
     }
   }
+
+  static async get(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await FieldService.get(req.params.fieldId);
+      res.status(200).json({
+        success: true,
+        message: "Get field successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

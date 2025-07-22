@@ -107,3 +107,52 @@ describe("PATCH /api/fields/:fieldId", () => {
     expect(res.status).toEqual(401);
   });
 });
+
+describe("GET /api/fields/:fieldId", () => {
+  let token: string;
+  let id: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+    id = await FieldTest.createField();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+    await FieldTest.deleteAll();
+  });
+
+  it("should can get field", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields/${id}`)
+      .set("Cookie", [`token=${token}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+    expect(res.body.data.id).toBeDefined();
+    expect(res.body.data.name).toEqual("lapangan Futsal A");
+    expect(res.body.data.location).toEqual("Jalan Merdeka");
+    expect(res.body.data.description).toEqual("Lapangan Futsal A Ini");
+    expect(res.body.data.pricePerHour).toEqual(200000);
+    expect(res.body.data.category).toEqual("Futsal");
+  });
+
+  it("should reject get field if token is invalid", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields/${id}`)
+      .set("Cookie", [`token=invalid_token`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should reject get field if field id is invalid", async () => {
+    const res = await supertest(web)
+      .get(`/api/fields/invalid_id`)
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(404);
+  });
+});

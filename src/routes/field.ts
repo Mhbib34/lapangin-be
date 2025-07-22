@@ -12,3 +12,4 @@ FieldRouter.patch(
   upload.single("image"),
   FieldController.update
 );
+FieldRouter.get("/:fieldId", userAuth, FieldController.get);

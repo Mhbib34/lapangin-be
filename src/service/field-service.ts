@@ -70,4 +70,17 @@ export class FieldService {
     });
     return toFieldResponse(fieldUpdate, fieldUpdate.category);
   }
+
+  static async get(id: string): Promise<FieldResponse> {
+    const field = await prismaClient.field.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        category: true,
+      },
+    });
+    if (!field) throw new ResponseError(404, "Field not found");
+    return toFieldResponse(field, field.category);
+  }
 }
