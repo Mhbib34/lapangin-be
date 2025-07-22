@@ -18,6 +18,15 @@ import { logger } from "../config/logging";
 import { User } from "@prisma/client";
 
 export class UserService {
+  static async checkUserMustExist(email: string) {
+    const user = await prismaClient.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return user;
+  }
+
   static async create(request: CreateUserRequest): Promise<UserResponse> {
     const userRequest = Validation.validate(UserValidation.CREATE, request);
     const findUser = await prismaClient.user.findUnique({
@@ -118,11 +127,7 @@ export class UserService {
       UserValidation.RESET_PASSWORD,
       request
     );
-    const findUser = await prismaClient.user.findUnique({
-      where: {
-        email: userRequest.email,
-      },
-    });
+    const findUser = await this.checkUserMustExist(userRequest.email);
 
     if (!findUser) throw new ResponseError(404, "Email not found");
 
@@ -154,11 +159,7 @@ export class UserService {
   }
 
   static async verifyOtp(user: User) {
-    const findUser = await prismaClient.user.findUnique({
-      where: {
-        email: user.email,
-      },
-    });
+    const findUser = await this.checkUserMustExist(user.email);
 
     if (!findUser) throw new ResponseError(404, "Email not found");
     if (findUser.verifyOtp || findUser.verifyOtpExpireAt)
@@ -188,11 +189,7 @@ export class UserService {
       UserValidation.VERIFY_EMAIL,
       request
     );
-    const findUser = await prismaClient.user.findUnique({
-      where: {
-        email: user.email,
-      },
-    });
+    const findUser = await this.checkUserMustExist(user.email);
 
     if (!findUser) throw new ResponseError(404, "Email not found");
     if (findUser.verifyOtp !== userRequest.otp)
