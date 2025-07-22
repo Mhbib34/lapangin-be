@@ -156,3 +156,45 @@ describe("GET /api/fields/:fieldId", () => {
     expect(res.status).toEqual(404);
   });
 });
+
+describe("DELETE /api/fields/:fieldId", () => {
+  let token: string;
+  let id: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+    id = await FieldTest.createField();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+    await FieldTest.deleteAll();
+  });
+
+  it("should can delete field", async () => {
+    const res = await supertest(web)
+      .delete(`/api/fields/${id}`)
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject delete field if token is invalid", async () => {
+    const res = await supertest(web)
+      .delete(`/api/fields/${id}`)
+      .set("Cookie", [`token=invalid_token`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should reject delete field if field id is invalid", async () => {
+    const res = await supertest(web)
+      .delete(`/api/fields/invalid_id`)
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(404);
+  });
+});

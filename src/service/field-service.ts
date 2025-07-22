@@ -8,7 +8,6 @@ import { FieldValidation } from "../validation/field-validation";
 import { Validation } from "../validation/validation";
 import { prismaClient } from "../config/database";
 import { ResponseError } from "../error/response-error";
-import { Field } from "@prisma/client";
 
 export class FieldService {
   static async create(request: CreateFieldRequest): Promise<FieldResponse> {
@@ -74,13 +73,32 @@ export class FieldService {
   static async get(id: string): Promise<FieldResponse> {
     const field = await prismaClient.field.findUnique({
       where: {
-        id: id,
+        id,
       },
       include: {
         category: true,
       },
     });
     if (!field) throw new ResponseError(404, "Field not found");
+    return toFieldResponse(field, field.category);
+  }
+  static async remove(id: string): Promise<FieldResponse> {
+    const field = await prismaClient.field.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        category: true,
+      },
+    });
+    if (!field) throw new ResponseError(404, "Field not found");
+
+    await prismaClient.field.delete({
+      where: {
+        id,
+      },
+    });
+
     return toFieldResponse(field, field.category);
   }
 }
