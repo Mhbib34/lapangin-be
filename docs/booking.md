@@ -25,7 +25,26 @@ Response Body (Success) :
 ```json
 {
   "success": true,
-  "message": "Create Booking Successfully"
+  "message": "Create Booking Successfully",
+  "data": {
+    "bookingId": "uuid",
+    "userId": "uuid",
+    "field": {
+      "id": "uuid",
+      "name": "lapangan merdeka baru",
+      "location": "jalan merdeka baru",
+      "description": "ini lapangan merdeka baru",
+      "image": "string",
+      "pricePerHour": 200000,
+      "category": "Futsal"
+    },
+    "startTime": "date time",
+    "endTime": "date time",
+    "durationHours": 1,
+    "totalPrice": 200000,
+    "status": "PENDING",
+    "createdAt": "date time"
+  }
 }
 ```
 
@@ -56,32 +75,42 @@ Response Body (Success) :
   "message": "Create Booking Successfully",
   "data": [
     {
-      "id": "uuid",
-      "user": {
-        "id": "uuid",
-        "name": "Habib"
-      },
+      "bookingId": "uuid",
+      "userId": "uuid",
       "field": {
         "id": "uuid",
-        "name": "Lapangan A"
+        "name": "lapangan merdeka baru",
+        "location": "jalan merdeka baru",
+        "description": "ini lapangan merdeka baru",
+        "image": "string",
+        "pricePerHour": 200000,
+        "category": "Futsal"
       },
-      "startTime": "2025-07-20T14:00:00.000Z",
-      "endTime": "2025-07-20T15:00:00.000Z",
-      "status": "PENDING"
+      "startTime": "date time",
+      "endTime": "date time",
+      "durationHours": 1,
+      "totalPrice": 200000,
+      "status": "PENDING",
+      "createdAt": "date time"
     },
     {
-      "id": "uuid",
-      "user": {
-        "id": "uuid",
-        "name": "Habib"
-      },
+      "bookingId": "uuid",
+      "userId": "uuid",
       "field": {
         "id": "uuid",
-        "name": "Lapangan A"
+        "name": "lapangan merdeka baru",
+        "location": "jalan merdeka baru",
+        "description": "ini lapangan merdeka baru",
+        "image": "string",
+        "pricePerHour": 200000,
+        "category": "Futsal"
       },
-      "startTime": "2025-07-20T14:00:00.000Z",
-      "endTime": "2025-07-20T15:00:00.000Z",
-      "status": "PENDING"
+      "startTime": "date time",
+      "endTime": "date time",
+      "durationHours": 1,
+      "totalPrice": 200000,
+      "status": "PENDING",
+      "createdAt": "date time"
     }
   ],
   "paging": {
@@ -117,32 +146,42 @@ Response Body (Success) :
   "message": "Create Booking Successfully",
   "data": [
     {
-      "id": "uuid",
-      "user": {
-        "id": "uuid",
-        "name": "Habib"
-      },
+      "bookingId": "uuid",
+      "userId": "uuid",
       "field": {
         "id": "uuid",
-        "name": "Lapangan A"
+        "name": "lapangan merdeka baru",
+        "location": "jalan merdeka baru",
+        "description": "ini lapangan merdeka baru",
+        "image": "string",
+        "pricePerHour": 200000,
+        "category": "Futsal"
       },
-      "startTime": "2025-07-20T14:00:00.000Z",
-      "endTime": "2025-07-20T15:00:00.000Z",
-      "status": "PENDING"
+      "startTime": "date time",
+      "endTime": "date time",
+      "durationHours": 1,
+      "totalPrice": 200000,
+      "status": "PENDING",
+      "createdAt": "date time"
     },
     {
-      "id": "uuid",
-      "user": {
-        "id": "uuid",
-        "name": "Habib"
-      },
+      "bookingId": "uuid",
+      "userId": "uuid",
       "field": {
         "id": "uuid",
-        "name": "Lapangan A"
+        "name": "lapangan merdeka baru",
+        "location": "jalan merdeka baru",
+        "description": "ini lapangan merdeka baru",
+        "image": "string",
+        "pricePerHour": 200000,
+        "category": "Futsal"
       },
-      "startTime": "2025-07-20T14:00:00.000Z",
-      "endTime": "2025-07-20T15:00:00.000Z",
-      "status": "PENDING"
+      "startTime": "date time",
+      "endTime": "date time",
+      "durationHours": 1,
+      "totalPrice": 200000,
+      "status": "PENDING",
+      "createdAt": "date time"
     }
   ]
 }
