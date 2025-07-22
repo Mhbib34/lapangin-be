@@ -1,4 +1,3 @@
-import { log } from "winston";
 import { prismaClient } from "../config/database";
 import { ResponseError } from "../error/response-error";
 import {
@@ -14,7 +13,6 @@ import {
 import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt";
-import { logger } from "../config/logging";
 import { User } from "@prisma/client";
 
 export class UserService {

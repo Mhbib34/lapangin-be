@@ -1,5 +1,9 @@
 import z, { ZodType } from "zod";
-import { CreateFieldRequest, UpdateFieldRequest } from "../model/field-model";
+import {
+  CreateFieldRequest,
+  SearchFieldRequest,
+  UpdateFieldRequest,
+} from "../model/field-model";
 
 export class FieldValidation {
   static readonly CREATE: ZodType<CreateFieldRequest> = z.object({
@@ -18,5 +22,13 @@ export class FieldValidation {
     image: z.string().min(1).max(100).optional(),
     pricePerHour: z.number().positive().optional(),
     category: z.string().min(1).max(100).optional(),
+  });
+
+  static readonly SEARCH: ZodType<SearchFieldRequest> = z.object({
+    name: z.string().min(1).max(100).optional(),
+    location: z.string().min(1).max(100).optional(),
+    category: z.string().min(1).max(100).optional(),
+    page: z.number().positive().min(1),
+    size: z.number().positive().min(1).max(100),
   });
 }

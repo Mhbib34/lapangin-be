@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateFieldRequest, UpdateFieldRequest } from "../model/field-model";
+import {
+  CreateFieldRequest,
+  SearchFieldRequest,
+  UpdateFieldRequest,
+} from "../model/field-model";
 import { FieldService } from "../service/field-service";
 
 export class FieldController {
@@ -57,6 +61,26 @@ export class FieldController {
       res.status(200).json({
         success: true,
         message: "Remove field successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async search(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request: SearchFieldRequest = {
+        name: req.query.name as string,
+        location: req.query.location as string,
+        category: req.query.category as string,
+        page: req.query.page ? parseInt(req.query.page as string) : 1,
+        size: req.query.size ? parseInt(req.query.size as string) : 10,
+      };
+      const result = await FieldService.search(request);
+      res.status(200).json({
+        success: true,
+        message: "Search field successfully",
+        ...result,
       });
     } catch (error) {
       next(error);
