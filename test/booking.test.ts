@@ -247,3 +247,51 @@ describe("PATCH /api/bookings/:bookingId", () => {
     expect(res.status).toEqual(400);
   });
 });
+
+describe("DELETE /api/bookings/:bookingId", () => {
+  let token: string;
+  let fieldId: string;
+  let userId: string | undefined;
+  let bookingId: string | undefined;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+    fieldId = await FieldTest.createField();
+    userId = await UserTest.getUser();
+    bookingId = await BookingTest.createBooking(userId!, fieldId);
+  });
+
+  afterEach(async () => {
+    await BookingTest.deleteAll(fieldId);
+    await FieldTest.deleteAll();
+    await UserTest.deleteAll();
+  });
+
+  it("should can delete booking", async () => {
+    const res = await supertest(web)
+      .delete(`/api/bookings/${bookingId}`)
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject delete booking if token is invalid", async () => {
+    const res = await supertest(web)
+      .delete(`/api/bookings/${bookingId}`)
+      .set("Cookie", [`token=invalid_token`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should reject delete booking if bookingId is invalid", async () => {
+    const res = await supertest(web)
+      .delete(`/api/bookings/invalid_id`)
+      .set("Cookie", [`token=${token}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(404);
+  });
+});

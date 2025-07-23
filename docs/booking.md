@@ -245,8 +245,8 @@ Response Body (Success) :
 
 ```json
 {
-  "success": true, //optional, only if not CONFIRMED or COMPLETED
-  "message": "Remove Booking Successfully" //optional, only if not CONFIRMED or COMPLETED
+  "success": true,
+  "message": "Remove Booking Successfully"
 }
 ```
 

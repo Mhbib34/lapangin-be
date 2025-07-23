@@ -58,14 +58,22 @@ export class BookingController {
     try {
       const request: UpdateBookingStatusRequest =
         req.body as UpdateBookingStatusRequest;
-      const result = await BookingService.updateStatus(
-        req.params.bookingId,
-        request
-      );
+      await BookingService.updateStatus(req.params.bookingId, request);
       res.status(200).json({
         success: true,
         message: "Update booking status successfully",
-        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async remove(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      await BookingService.remove(req.params.bookingId);
+      res.status(200).json({
+        success: true,
+        message: "Remove booking successfully",
       });
     } catch (error) {
       next(error);

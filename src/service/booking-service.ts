@@ -43,6 +43,17 @@ function transformBookingToResponse(
 }
 
 export class BookingService {
+  static async checkBookingMustExist(bookingId: string) {
+    const booking = await prismaClient.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+    });
+    if (!booking) {
+      throw new ResponseError(404, "Booking not found");
+    }
+    return booking;
+  }
   static async create(
     user: User,
     request: CreateBookingRequest
@@ -148,6 +159,7 @@ export class BookingService {
       BookingValidation.UPDATE_STATUS,
       request
     );
+    await this.checkBookingMustExist(bookingId);
     const booking = await prismaClient.booking.update({
       where: {
         id: bookingId,
@@ -164,5 +176,14 @@ export class BookingService {
       },
     });
     return toBookingResponse(booking, booking.field);
+  }
+
+  static async remove(bookingId: string) {
+    await this.checkBookingMustExist(bookingId);
+    await prismaClient.booking.delete({
+      where: {
+        id: bookingId,
+      },
+    });
   }
 }
