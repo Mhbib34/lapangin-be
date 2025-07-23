@@ -89,3 +89,58 @@ describe("POST /api/bookings", () => {
     expect(res.status).toEqual(400);
   });
 });
+
+describe("GET /api/bookings", () => {
+  let tokenUser: string;
+  let tokenAdmin: string;
+  let fieldId: string;
+  let userAdminId: string | undefined;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    await UserTest.createUserAdmin();
+    tokenUser = await loginAndGetToken();
+    tokenAdmin = await loginAndGetTokenAdmin();
+    fieldId = await FieldTest.createField();
+    userAdminId = await UserTest.getUserAdmin();
+
+    await BookingTest.createBooking(userAdminId, fieldId);
+  });
+
+  afterEach(async () => {
+    await BookingTest.deleteAll(fieldId);
+    await FieldTest.deleteAll();
+    await UserTest.deleteAll();
+    await UserTest.deleteAllAdmin();
+  });
+
+  it("should can list bookings", async () => {
+    const res = await supertest(web)
+      .get(`/api/bookings`)
+      .set("Cookie", [`token=${tokenAdmin}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject list bookings if token is invalid", async () => {
+    const res = await supertest(web)
+      .get(`/api/bookings`)
+      .set("Cookie", [`token=invalid_token`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should reject list bookings if user is not admin", async () => {
+    const res = await supertest(web)
+      .get(`/api/bookings`)
+      .set("Cookie", [`token=${tokenUser}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(403);
+  });
+});
