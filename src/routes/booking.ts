@@ -14,3 +14,4 @@ BookingRouter.patch(
   isAdmin,
   BookingController.updateStatus
 );
+BookingRouter.delete("/:bookingId", userAuth, BookingController.remove);
