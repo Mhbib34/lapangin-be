@@ -27,7 +27,21 @@ export class BookingService {
         userId: user.id,
       },
       include: {
-        field: true,
+        field: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
+            description: true,
+            image: true,
+            pricePerHour: true,
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
