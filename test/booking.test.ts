@@ -144,3 +144,44 @@ describe("GET /api/bookings", () => {
     expect(res.status).toEqual(403);
   });
 });
+
+describe("GET /api/bookings/users", () => {
+  let tokenUser: string;
+  let fieldId: string;
+  let userId: string | undefined;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    tokenUser = await loginAndGetToken();
+    fieldId = await FieldTest.createField();
+    userId = await UserTest.getUser();
+
+    await BookingTest.createBooking(userId!, fieldId);
+  });
+
+  afterEach(async () => {
+    await BookingTest.deleteAll(fieldId);
+    await FieldTest.deleteAll();
+    await UserTest.deleteAll();
+  });
+
+  it("should can get bookings", async () => {
+    const res = await supertest(web)
+      .get(`/api/bookings/users`)
+      .set("Cookie", [`token=${tokenUser}`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject get bookings if token is invalid", async () => {
+    const res = await supertest(web)
+      .get(`/api/bookings/users`)
+      .set("Cookie", [`token=invalid_token`]);
+
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+});

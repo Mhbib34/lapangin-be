@@ -33,4 +33,17 @@ export class BookingController {
       next(error);
     }
   }
+
+  static async get(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await BookingService.get(req.user!);
+      res.status(200).json({
+        success: true,
+        message: "Get booking successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

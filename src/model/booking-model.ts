@@ -1,4 +1,4 @@
-import { Booking, BookingStatus, Field } from "@prisma/client";
+import { Booking, BookingStatus, Category, Field } from "@prisma/client";
 import { FieldResponse } from "./field-model";
 
 export type CreateBookingRequest = {
@@ -31,6 +31,11 @@ export type BookingResponse = {
   createdAt: Date;
 };
 
+export type BookingWithField = Booking & {
+  field: Field & {
+    category: Category;
+  };
+};
 export function toBookingResponse(
   booking: Booking,
   field: BookingFieldResponse,
