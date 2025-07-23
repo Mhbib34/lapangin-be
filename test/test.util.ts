@@ -69,6 +69,24 @@ export class UserTest {
     });
   }
 
+  static async getUser() {
+    const res = await prismaClient.user.findUnique({
+      where: {
+        email: "test@example.com",
+      },
+    });
+    return res?.id;
+  }
+
+  static async getUserAdmin() {
+    const res = await prismaClient.user.findUnique({
+      where: {
+        email: "admin@example.com",
+      },
+    });
+    return res?.id!;
+  }
+
   static async getresetOtp() {
     const token = await loginAndGetToken();
     await supertest(web)
@@ -148,6 +166,20 @@ export class BookingTest {
     await prismaClient.booking.deleteMany({
       where: {
         fieldId,
+      },
+    });
+  }
+
+  static async createBooking(userId: string, fieldId: string) {
+    const now = new Date();
+    const startTime = new Date(now.getTime() + 60 * 60 * 1000);
+    const endTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    await prismaClient.booking.create({
+      data: {
+        fieldId,
+        startTime,
+        endTime,
+        userId,
       },
     });
   }
