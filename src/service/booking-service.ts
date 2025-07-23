@@ -2,6 +2,7 @@ import { User } from "@prisma/client";
 import {
   BookingFieldResponse,
   BookingResponse,
+  BookingWithField,
   CreateBookingRequest,
   toBookingResponse,
 } from "../model/booking-model";
@@ -10,6 +11,35 @@ import { BookingValidation } from "../validation/booking-validation";
 import { FieldService } from "./field-service";
 import { prismaClient } from "../config/database";
 import { pagingResponse } from "../model/page";
+import { ResponseError } from "../error/response-error";
+
+function transformBookingToResponse(
+  bookings: BookingWithField[]
+): BookingResponse[] {
+  return bookings.map((booking) => {
+    const durationHours =
+      (booking.endTime.getTime() - booking.startTime.getTime()) /
+      1000 /
+      60 /
+      60;
+
+    const totalPrice = durationHours * booking.field.pricePerHour;
+
+    const field: BookingFieldResponse = {
+      id: booking.field.id,
+      name: booking.field.name,
+      location: booking.field.location,
+      description: booking.field.description,
+      image: booking.field.image,
+      pricePerHour: booking.field.pricePerHour,
+      category: {
+        name: booking.field.category.name,
+      },
+    };
+
+    return toBookingResponse(booking, field, durationHours, totalPrice);
+  });
+}
 
 export class BookingService {
   static async create(
@@ -61,13 +91,9 @@ export class BookingService {
     page: number = 1,
     size: number = 10
   ): Promise<pagingResponse<BookingResponse>> {
-    // Hitung offset
     const skip = (page - 1) * size;
-
-    // Ambil total data untuk hitung total_page
     const totalData = await prismaClient.booking.count();
 
-    // Ambil data dengan relasi field + category
     const bookings = await prismaClient.booking.findMany({
       skip,
       take: size,
@@ -81,32 +107,8 @@ export class BookingService {
       },
     });
 
-    // Transform jadi BookingResponse
-    const data: BookingResponse[] = bookings.map((booking) => {
-      const durationHours =
-        (booking.endTime.getTime() - booking.startTime.getTime()) /
-        1000 /
-        60 /
-        60;
+    const data = transformBookingToResponse(bookings);
 
-      const totalPrice = durationHours * booking.field.pricePerHour;
-
-      const field: BookingFieldResponse = {
-        id: booking.field.id,
-        name: booking.field.name,
-        location: booking.field.location,
-        description: booking.field.description,
-        image: booking.field.image,
-        pricePerHour: booking.field.pricePerHour,
-        category: {
-          name: booking.field.category.name,
-        },
-      };
-
-      return toBookingResponse(booking, field, durationHours, totalPrice);
-    });
-
-    // Bentuk response paging
     const paging = {
       size,
       total_page: Math.ceil(totalData / size),
@@ -114,5 +116,26 @@ export class BookingService {
     };
 
     return { data, paging };
+  }
+
+  static async get(user: User): Promise<BookingResponse[]> {
+    const bookings = await prismaClient.booking.findMany({
+      where: {
+        userId: user.id,
+      },
+      include: {
+        field: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    if (!bookings) throw new ResponseError(404, "Bookings not found");
+
+    const data = transformBookingToResponse(bookings);
+
+    return data;
   }
 }

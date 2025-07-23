@@ -131,7 +131,7 @@ Response Body (Failed) :
 
 ## Get Booking
 
-Endpoint : GET /api/bookings/users/:userId
+Endpoint : GET /api/bookings/users
 
 Request Header :
 
