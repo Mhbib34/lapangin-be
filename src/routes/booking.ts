@@ -8,3 +8,9 @@ export const BookingRouter = express.Router();
 BookingRouter.post("/", userAuth, BookingController.create);
 BookingRouter.get("/", userAuth, isAdmin, BookingController.list);
 BookingRouter.get("/users", userAuth, BookingController.get);
+BookingRouter.patch(
+  "/:bookingId",
+  userAuth,
+  isAdmin,
+  BookingController.updateStatus
+);

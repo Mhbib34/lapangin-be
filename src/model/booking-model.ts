@@ -25,10 +25,14 @@ export type BookingResponse = {
   field: BookingFieldResponse;
   startTime: Date;
   endTime: Date;
-  durationHours: number;
-  totalPrice: number;
+  durationHours?: number;
+  totalPrice?: number;
   status: BookingStatus;
   createdAt: Date;
+};
+
+export type UpdateBookingStatusRequest = {
+  status: BookingStatus;
 };
 
 export type BookingWithField = Booking & {
@@ -39,8 +43,8 @@ export type BookingWithField = Booking & {
 export function toBookingResponse(
   booking: Booking,
   field: BookingFieldResponse,
-  durationHours: number,
-  totalPrice: number
+  durationHours?: number,
+  totalPrice?: number
 ): BookingResponse {
   return {
     bookingId: booking.id,
