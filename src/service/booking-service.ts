@@ -5,6 +5,7 @@ import {
   BookingWithField,
   CreateBookingRequest,
   toBookingResponse,
+  UpdateBookingStatusRequest,
 } from "../model/booking-model";
 import { Validation } from "../validation/validation";
 import { BookingValidation } from "../validation/booking-validation";
@@ -137,5 +138,31 @@ export class BookingService {
     const data = transformBookingToResponse(bookings);
 
     return data;
+  }
+
+  static async updateStatus(
+    bookingId: string,
+    request: UpdateBookingStatusRequest
+  ): Promise<BookingResponse> {
+    const statusRequest = Validation.validate(
+      BookingValidation.UPDATE_STATUS,
+      request
+    );
+    const booking = await prismaClient.booking.update({
+      where: {
+        id: bookingId,
+      },
+      data: {
+        status: statusRequest.status,
+      },
+      include: {
+        field: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+    return toBookingResponse(booking, booking.field);
   }
 }

@@ -3,6 +3,7 @@ import { prismaClient } from "../src/config/database";
 import bcrypt from "bcrypt";
 import { web } from "../src/config/web";
 import path from "path";
+import { startTime, endTime } from "../src/utils/booking-time";
 
 export async function loginAndGetToken(): Promise<string> {
   const loginRes = await supertest(web).post("/api/users/login").send({
@@ -171,10 +172,7 @@ export class BookingTest {
   }
 
   static async createBooking(userId: string, fieldId: string) {
-    const now = new Date();
-    const startTime = new Date(now.getTime() + 60 * 60 * 1000);
-    const endTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-    await prismaClient.booking.create({
+    const res = await prismaClient.booking.create({
       data: {
         fieldId,
         startTime,
@@ -182,5 +180,15 @@ export class BookingTest {
         userId,
       },
     });
+    return res.id;
+  }
+
+  static async get(bookingId: string) {
+    const res = await prismaClient.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+    });
+    return res;
   }
 }

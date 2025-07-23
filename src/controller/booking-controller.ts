@@ -1,6 +1,9 @@
 import { NextFunction, Response, Request } from "express";
 import { UserRequest } from "../type/user-request";
-import { CreateBookingRequest } from "../model/booking-model";
+import {
+  CreateBookingRequest,
+  UpdateBookingStatusRequest,
+} from "../model/booking-model";
 import { BookingService } from "../service/booking-service";
 
 export class BookingController {
@@ -40,6 +43,28 @@ export class BookingController {
       res.status(200).json({
         success: true,
         message: "Get booking successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateStatus(
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: UpdateBookingStatusRequest =
+        req.body as UpdateBookingStatusRequest;
+      const result = await BookingService.updateStatus(
+        req.params.bookingId,
+        request
+      );
+      res.status(200).json({
+        success: true,
+        message: "Update booking status successfully",
         data: result,
       });
     } catch (error) {

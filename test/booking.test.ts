@@ -8,10 +8,7 @@ import {
   UserTest,
 } from "./test.util";
 import { web } from "../src/config/web";
-
-const now = new Date();
-const startTime = new Date(now.getTime() + 60 * 60 * 1000);
-const endTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+import { startTime, endTime } from "../src/utils/booking-time";
 
 describe("POST /api/bookings", () => {
   let token: string;
@@ -183,5 +180,70 @@ describe("GET /api/bookings/users", () => {
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(401);
+  });
+});
+
+describe("PATCH /api/bookings/:bookingId", () => {
+  let tokenUser: string;
+  let tokenAdmin: string;
+  let fieldId: string;
+  let userAdminId: string | undefined;
+  let bookingId: string | undefined;
+
+  beforeEach(async () => {
+    await UserTest.createUser();
+    await UserTest.createUserAdmin();
+    tokenUser = await loginAndGetToken();
+    tokenAdmin = await loginAndGetTokenAdmin();
+    fieldId = await FieldTest.createField();
+    userAdminId = await UserTest.getUserAdmin();
+    bookingId = await BookingTest.createBooking(userAdminId, fieldId);
+  });
+
+  afterEach(async () => {
+    await BookingTest.deleteAll(fieldId);
+    await FieldTest.deleteAll();
+    await UserTest.deleteAll();
+    await UserTest.deleteAllAdmin();
+  });
+
+  it("should can update booking status", async () => {
+    const res = await supertest(web)
+      .patch(`/api/bookings/${bookingId}`)
+      .set("Cookie", [`token=${tokenAdmin}`])
+      .send({ status: "CONFIRMED" });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject update booking status if token is invalid", async () => {
+    const res = await supertest(web)
+      .patch(`/api/bookings/${bookingId}`)
+      .set("Cookie", [`token=invalid_token`])
+      .send({ status: "CONFIRMED" });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+  });
+
+  it("should reject update booking status if user is not admin", async () => {
+    const res = await supertest(web)
+      .patch(`/api/bookings/${bookingId}`)
+      .set("Cookie", [`token=${tokenUser}`])
+      .send({ status: "CONFIRMED" });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(403);
+  });
+
+  it("should reject update booking status if status is invalid", async () => {
+    const res = await supertest(web)
+      .patch(`/api/bookings/${bookingId}`)
+      .set("Cookie", [`token=${tokenAdmin}`])
+      .send({ status: "INVALID_STATUS" });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
   });
 });
