@@ -118,7 +118,6 @@ export class UserService {
   }
 
   static async resetPassword(
-    user: User,
     request: ResetPasswordRequest
   ): Promise<UserResponse> {
     const userRequest = Validation.validate(
@@ -136,7 +135,7 @@ export class UserService {
 
     const isPasswordSame = await bcrypt.compare(
       userRequest.newPassword,
-      user.password
+      findUser.password
     );
 
     if (isPasswordSame)

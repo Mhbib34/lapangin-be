@@ -108,14 +108,10 @@ export class UserController {
       next(error);
     }
   }
-  static async resetPassword(
-    req: UserRequest,
-    res: Response,
-    next: NextFunction
-  ) {
+  static async resetPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const request: ResetPasswordRequest = req.body as ResetPasswordRequest;
-      await UserService.resetPassword(req.user!, request);
+      await UserService.resetPassword(request);
       JwtUtils.clearToken(res);
       res.status(200).json({
         success: true,
