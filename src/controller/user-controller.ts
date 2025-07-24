@@ -89,13 +89,10 @@ export class UserController {
     }
   }
 
-  static async resetOtp(req: UserRequest, res: Response, next: NextFunction) {
+  static async resetOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const request: SendResetPWOtpRequest = req.body as SendResetPWOtpRequest;
-      const { otp, userUpdate } = await UserService.resetOtp(
-        req.user!,
-        request
-      );
+      const { otp, userUpdate } = await UserService.resetOtp(request);
       const mailOption = {
         from: process.env.SENDER_EMAIL,
         to: userUpdate.email,
