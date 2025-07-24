@@ -86,7 +86,7 @@ export class UserService {
     return { success: true, message: "User Logout successfully" };
   }
 
-  static async resetOtp(user: User, request: SendResetPWOtpRequest) {
+  static async resetOtp(request: SendResetPWOtpRequest) {
     const userRequest = Validation.validate(
       UserValidation.RESET_PW_OTP,
       request
@@ -106,7 +106,7 @@ export class UserService {
 
     const userUpdate = await prismaClient.user.update({
       where: {
-        id: user.id,
+        email: userRequest.email,
       },
       data: {
         resetOtp: otp,
@@ -145,7 +145,7 @@ export class UserService {
     const newPassword = await bcrypt.hash(userRequest.newPassword, 10);
     const userUpdate = await prismaClient.user.update({
       where: {
-        id: user.id,
+        email: userRequest.email,
       },
       data: {
         password: newPassword,
