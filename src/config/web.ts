@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { FieldRouter } from "../routes/field";
 import { BookingRouter } from "../routes/booking";
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:8000"];
+const allowedOrigins = ["http://localhost:4000", "http://localhost:8000"];
 
 export const web = express();
 web.use(express.json());
