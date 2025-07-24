@@ -241,11 +241,8 @@ describe("DELETE /api/users", () => {
 });
 
 describe("POST /api/users/reset-otp", () => {
-  let token: string;
-
   beforeEach(async () => {
     await UserTest.createUser();
-    token = await loginAndGetToken();
   });
 
   afterEach(async () => {
@@ -253,34 +250,17 @@ describe("POST /api/users/reset-otp", () => {
   });
 
   it("should can send reset password otp", async () => {
-    const res = await supertest(web)
-      .post("/api/users/reset-otp")
-      .set("Cookie", [`token=${token}`])
-      .send({
-        email: "test@example.com",
-      });
+    const res = await supertest(web).post("/api/users/reset-otp").send({
+      email: "test@example.com",
+    });
     console.log(res.body);
     expect(res.status).toEqual(200);
   });
 
-  it("should reject send reset password otp if token is invalid", async () => {
-    const res = await supertest(web)
-      .post("/api/users/reset-otp")
-      .set("Cookie", [`token=invalid_token`])
-      .send({
-        email: "test@example.com",
-      });
-    console.log(res.body);
-    expect(res.status).toEqual(401);
-    expect(res.body.errors).toBeDefined();
-  });
   it("should reject send reset password otp if request body is invalid", async () => {
-    const res = await supertest(web)
-      .post("/api/users/reset-otp")
-      .set("Cookie", [`token=${token}`])
-      .send({
-        email: "",
-      });
+    const res = await supertest(web).post("/api/users/reset-otp").send({
+      email: "",
+    });
     console.log(res.body);
     expect(res.status).toEqual(400);
     expect(res.body.errors).toBeDefined();
@@ -288,11 +268,9 @@ describe("POST /api/users/reset-otp", () => {
 });
 
 describe("PATCH /api/users/reset-password", () => {
-  let token: string;
   let otp: number;
   beforeEach(async () => {
     await UserTest.createUser();
-    token = await loginAndGetToken();
     otp = (await UserTest.getresetOtp())!;
   });
 
@@ -301,44 +279,23 @@ describe("PATCH /api/users/reset-password", () => {
   });
 
   it("should can reset password", async () => {
-    const res = await supertest(web)
-      .patch("/api/users/reset-password")
-      .set("Cookie", [`token=${token}`])
-      .send({
-        email: "test@example.com",
-        otp,
-        newPassword: "rahasia baru",
-      });
+    const res = await supertest(web).patch("/api/users/reset-password").send({
+      email: "test@example.com",
+      otp,
+      newPassword: "rahasia baru",
+    });
 
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(200);
   });
 
-  it("should reject reset password if token is invalid", async () => {
-    const res = await supertest(web)
-      .patch("/api/users/reset-password")
-      .set("Cookie", [`token=invalid_token`])
-      .send({
-        email: "test@example.com",
-        otp,
-        newPassword: "rahasia baru",
-      });
-    logger.debug(res.body);
-    console.log(res.body);
-    expect(res.status).toEqual(401);
-    expect(res.body.errors).toBeDefined();
-  });
-
   it("should reject reset password if request body is invalid", async () => {
-    const res = await supertest(web)
-      .patch("/api/users/reset-password")
-      .set("Cookie", [`token=${token}`])
-      .send({
-        email: "test@example.com",
-        otp,
-        newPassword: "",
-      });
+    const res = await supertest(web).patch("/api/users/reset-password").send({
+      email: "test@example.com",
+      otp,
+      newPassword: "",
+    });
     logger.debug(res.body);
     console.log(res.body);
     expect(res.status).toEqual(400);
@@ -347,7 +304,6 @@ describe("PATCH /api/users/reset-password", () => {
   it("should reject reset password if otp is invalid", async () => {
     const res = await supertest(web)
       .patch("/api/users/reset-password")
-      .set("Cookie", [`token=${token}`])
       .send({
         email: "test@example.com",
         otp: otp + 1,
