@@ -12,6 +12,7 @@ export class FieldController {
       const request: CreateFieldRequest = {
         ...req.body,
         pricePerHour: Number(req.body.pricePerHour),
+        capacity: Number(req.body.capacity),
         image: req.file?.path,
       };
       const result = await FieldService.create(request);
@@ -29,6 +30,7 @@ export class FieldController {
       const request: UpdateFieldRequest = {
         ...req.body,
         pricePerHour: Number(req.body.pricePerHour),
+        capacity: Number(req.body.capacity),
         image: req.file?.path,
       };
       request.id = req.params.fieldId;

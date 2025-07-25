@@ -142,6 +142,8 @@ export class FieldTest {
         location: "Jalan Merdeka",
         description: "Lapangan Futsal A Ini",
         pricePerHour: 200000,
+        capacity: 22,
+        operationalHour: "06:00 - 22:00",
         category: {
           connectOrCreate: {
             where: {
