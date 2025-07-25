@@ -1,4 +1,4 @@
-import { Category, Field } from "@prisma/client";
+import { Category, Field, FieldStatus } from "@prisma/client";
 
 export type CreateFieldRequest = {
   name: string;
@@ -7,6 +7,9 @@ export type CreateFieldRequest = {
   image?: string;
   pricePerHour: number;
   category: string;
+  operationalHour?: string;
+  capacity: number;
+  status?: FieldStatus;
 };
 export type UpdateFieldRequest = {
   id: string;
@@ -16,6 +19,9 @@ export type UpdateFieldRequest = {
   image?: string;
   pricePerHour?: number;
   category?: string;
+  operationalHour?: string;
+  capacity: number;
+  status?: FieldStatus;
 };
 
 export type FieldResponse = {
@@ -26,6 +32,9 @@ export type FieldResponse = {
   image?: string | null;
   pricePerHour: number;
   category: string;
+  operationalHour?: string | null;
+  capacity: number;
+  status?: FieldStatus | null;
 };
 
 export type SearchFieldRequest = {
@@ -47,6 +56,9 @@ export function toFieldResponse(
     description: field.description,
     image: field.image,
     pricePerHour: field.pricePerHour,
+    operationalHour: field.operationalHour,
+    capacity: field.capacity,
+    status: field.status,
     category: category.name,
   };
 }

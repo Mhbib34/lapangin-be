@@ -13,6 +13,9 @@ export class FieldValidation {
     image: z.string().min(1).max(100).optional(),
     pricePerHour: z.number().positive(),
     category: z.string().min(1).max(100),
+    operationalHour: z.string().min(1).max(100).optional(),
+    capacity: z.number().positive(),
+    status: z.enum(["ACTIVE", "NONACTIVE", "MAINTENANCE"]).optional(),
   });
   static readonly UPDATE: ZodType<UpdateFieldRequest> = z.object({
     id: z.string().min(1).max(100),
@@ -22,6 +25,9 @@ export class FieldValidation {
     image: z.string().min(1).max(100).optional(),
     pricePerHour: z.number().positive().optional(),
     category: z.string().min(1).max(100).optional(),
+    operationalHour: z.string().min(1).max(100).optional(),
+    capacity: z.number().positive(),
+    status: z.enum(["ACTIVE", "NONACTIVE", "MAINTENANCE"]).optional(),
   });
 
   static readonly SEARCH: ZodType<SearchFieldRequest> = z.object({

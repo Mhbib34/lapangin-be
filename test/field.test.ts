@@ -33,6 +33,8 @@ describe("POST /api/fields", () => {
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
 
@@ -44,11 +46,13 @@ describe("POST /api/fields", () => {
   it("should reject create field if token is invalid", async () => {
     const res = await supertest(web)
       .post("/api/fields")
-      .set("Cookie", [`token=invalid_token`])
+      .set("Cookie", [`token=dadas`])
       .field("name", "lapangan Futsal A")
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", ""); // pastikan file ada
     logger.debug(res.body);
@@ -64,6 +68,8 @@ describe("POST /api/fields", () => {
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", "");
     logger.debug(res.body);
@@ -79,6 +85,8 @@ describe("POST /api/fields", () => {
       .field("location", "Jalan Merdeka")
       .field("description", "Lapangan Futsal A Ini")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", "");
     logger.debug(res.body);
@@ -113,6 +121,8 @@ describe("PATCH /api/fields/:fieldId", () => {
       .field("location", "Jalan Merdeka asda")
       .field("description", "Lapangan Futsal A Ini asdads")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
     logger.debug(res.body);
@@ -128,6 +138,8 @@ describe("PATCH /api/fields/:fieldId", () => {
       .field("location", "Jalan Merdeka asda")
       .field("description", "Lapangan Futsal A Ini asdads")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
     logger.debug(res.body);
@@ -143,6 +155,8 @@ describe("PATCH /api/fields/:fieldId", () => {
       .field("location", "Jalan Merdeka asda")
       .field("description", "Lapangan Futsal A Ini asdads")
       .field("pricePerHour", 200000)
+      .field("capacity", 22)
+      .field("operationalHour", "06:00 - 22:00")
       .field("category", "Futsal");
     // .attach("image", path.resolve(__dirname, "assets/futsal.png")); // pastikan file ada
     logger.debug(res.body);
