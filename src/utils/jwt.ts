@@ -8,6 +8,7 @@ export class JwtUtils {
       {
         id: result.id,
         email: result.email,
+        role: result.role,
       },
       process.env.JWT_SECRET as string,
       { expiresIn: "7d" }
