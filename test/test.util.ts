@@ -190,3 +190,21 @@ export class BookingTest {
     return res;
   }
 }
+
+export class CategoryTetst {
+  static async deleteAll() {
+    await prismaClient.category.deleteMany({
+      where: {
+        name: "test",
+      },
+    });
+  }
+
+  static async createCategory() {
+    await prismaClient.category.create({
+      data: {
+        name: "test",
+      },
+    });
+  }
+}
