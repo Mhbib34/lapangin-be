@@ -10,6 +10,7 @@ import { Validation } from "../validation/validation";
 import { prismaClient } from "../config/database";
 import { ResponseError } from "../error/response-error";
 import { pagingResponse } from "../model/page";
+import { Prisma } from "@prisma/client";
 
 export class FieldService {
   static async checkFieldMustExist(fieldId: string) {
@@ -108,6 +109,7 @@ export class FieldService {
       filters.push({
         name: {
           contains: searchRequest.name,
+          mode: Prisma.QueryMode.insensitive,
         },
       });
     }
@@ -115,6 +117,7 @@ export class FieldService {
       filters.push({
         location: {
           contains: searchRequest.location,
+          mode: Prisma.QueryMode.insensitive,
         },
       });
     }
@@ -123,6 +126,7 @@ export class FieldService {
         category: {
           name: {
             contains: searchRequest.category,
+            mode: Prisma.QueryMode.insensitive,
           },
         },
       });
