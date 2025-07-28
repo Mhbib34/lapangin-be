@@ -104,38 +104,38 @@ export class FieldService {
     const searchRequest = Validation.validate(FieldValidation.SEARCH, request);
     const skip = (searchRequest.page - 1) * searchRequest.size;
 
-    const filters = [];
-    if (searchRequest.name) {
-      filters.push({
-        name: {
-          contains: searchRequest.name,
-          mode: Prisma.QueryMode.insensitive,
-        },
-      });
-    }
-    if (searchRequest.location) {
-      filters.push({
-        location: {
-          contains: searchRequest.location,
-          mode: Prisma.QueryMode.insensitive,
-        },
-      });
-    }
-    if (searchRequest.category) {
-      filters.push({
-        category: {
-          name: {
-            contains: searchRequest.category,
-            mode: Prisma.QueryMode.insensitive,
-          },
-        },
-      });
-    }
+    const keyword = searchRequest.name?.trim();
+
+    const filters =
+      keyword && keyword.length > 0
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: keyword,
+                  mode: Prisma.QueryMode.insensitive,
+                },
+              },
+              {
+                location: {
+                  contains: keyword,
+                  mode: Prisma.QueryMode.insensitive,
+                },
+              },
+              {
+                category: {
+                  name: {
+                    contains: keyword,
+                    mode: Prisma.QueryMode.insensitive,
+                  },
+                },
+              },
+            ],
+          }
+        : {};
 
     const fields = await prismaClient.field.findMany({
-      where: {
-        AND: filters,
-      },
+      where: filters,
       include: {
         category: true,
       },
@@ -144,9 +144,7 @@ export class FieldService {
     });
 
     const total = await prismaClient.field.count({
-      where: {
-        AND: filters,
-      },
+      where: filters,
     });
 
     return {
