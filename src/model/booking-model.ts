@@ -1,5 +1,5 @@
 import { Booking, BookingStatus, Category, Field } from "@prisma/client";
-import { FieldResponse } from "./field-model";
+import { UserResponse } from "./user-model";
 
 export type CreateBookingRequest = {
   fieldId: string;
@@ -22,6 +22,7 @@ export type BookingFieldResponse = {
 export type BookingResponse = {
   bookingId: string;
   userId: string;
+  user: UserResponse;
   field: BookingFieldResponse;
   startTime: Date;
   endTime: Date;
@@ -39,17 +40,20 @@ export type BookingWithField = Booking & {
   field: Field & {
     category: Category;
   };
+  user: UserResponse;
 };
 export function toBookingResponse(
   booking: Booking,
   field: BookingFieldResponse,
+  user: UserResponse,
   durationHours?: number,
   totalPrice?: number
 ): BookingResponse {
   return {
     bookingId: booking.id,
     userId: booking.userId,
-    field: field,
+    field,
+    user,
     startTime: booking.startTime,
     endTime: booking.endTime,
     durationHours,

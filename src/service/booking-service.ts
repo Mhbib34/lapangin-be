@@ -38,7 +38,13 @@ function transformBookingToResponse(
       },
     };
 
-    return toBookingResponse(booking, field, durationHours, totalPrice);
+    return toBookingResponse(
+      booking,
+      field,
+      booking.user,
+      durationHours,
+      totalPrice
+    );
   });
 }
 
@@ -63,6 +69,22 @@ export class BookingService {
       request
     );
     await FieldService.checkFieldMustExist(bookingRequest.fieldId);
+
+    const findBooking = await prismaClient.booking.findFirst({
+      where: {
+        startTime: {
+          lte: bookingRequest.endTime,
+        },
+        endTime: {
+          gte: bookingRequest.startTime,
+        },
+      },
+    });
+
+    if (findBooking) {
+      throw new ResponseError(400, "Booking already exists");
+    }
+
     const booking = await prismaClient.booking.create({
       data: {
         fieldId: bookingRequest.fieldId,
@@ -71,6 +93,17 @@ export class BookingService {
         userId: user.id,
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            role: true,
+            isAccountVerified: true,
+            createdAt: true,
+          },
+        },
         field: {
           select: {
             id: true,
@@ -96,7 +129,13 @@ export class BookingService {
 
     const totalPrice = booking.field.pricePerHour * durationHours;
 
-    return toBookingResponse(booking, booking.field, durationHours, totalPrice);
+    return toBookingResponse(
+      booking,
+      booking.field,
+      booking.user,
+      durationHours,
+      totalPrice
+    );
   }
 
   static async list(
@@ -111,6 +150,17 @@ export class BookingService {
       take: size,
       orderBy: { createdAt: "desc" },
       include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            role: true,
+            isAccountVerified: true,
+            createdAt: true,
+          },
+        },
         field: {
           include: {
             category: true,
@@ -136,6 +186,17 @@ export class BookingService {
         userId: user.id,
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            role: true,
+            isAccountVerified: true,
+            createdAt: true,
+          },
+        },
         field: {
           include: {
             category: true,
@@ -168,6 +229,17 @@ export class BookingService {
         status: statusRequest.status,
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            role: true,
+            isAccountVerified: true,
+            createdAt: true,
+          },
+        },
         field: {
           include: {
             category: true,
@@ -175,7 +247,7 @@ export class BookingService {
         },
       },
     });
-    return toBookingResponse(booking, booking.field);
+    return toBookingResponse(booking, booking.field, booking.user);
   }
 
   static async remove(bookingId: string) {
