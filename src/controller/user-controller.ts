@@ -157,4 +157,17 @@ export class UserController {
       next(error);
     }
   }
+
+  static async list(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await UserService.list();
+      res.status(200).json({
+        success: true,
+        message: "List User Successfully",
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

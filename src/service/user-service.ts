@@ -205,4 +205,13 @@ export class UserService {
     });
     return toUserResponse(userUpdate);
   }
+
+  static async list() {
+    const users = await prismaClient.user.findMany({
+      where: {
+        role: "USER",
+      },
+    });
+    return users.map(toUserResponse);
+  }
 }
