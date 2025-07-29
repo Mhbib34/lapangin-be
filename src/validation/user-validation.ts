@@ -14,6 +14,7 @@ export class UserValidation {
     password: z.string().min(1).max(100),
     name: z.string().min(1).max(100),
     email: z.string().email().min(1).max(100),
+    phone: z.string().optional(),
     role: z.enum(["USER", "ADMIN"]).optional(),
   });
   static readonly UPDATE: ZodType<UpdateUserRequest> = z.object({
@@ -21,6 +22,7 @@ export class UserValidation {
     password: z.string().min(1).max(100).optional(),
     name: z.string().min(1).max(100).optional(),
     email: z.string().min(1).max(100).email().optional(),
+    phone: z.string().optional(),
     role: z.enum(["USER", "ADMIN"]).optional(),
   });
   static readonly LOGIN: ZodType<LoginUserRequest> = z.object({

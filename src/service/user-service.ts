@@ -14,6 +14,7 @@ import { UserValidation } from "../validation/user-validation";
 import { Validation } from "../validation/validation";
 import bcrypt from "bcrypt";
 import { User } from "@prisma/client";
+import { pagingResponse } from "../model/page";
 
 export class UserService {
   static async checkUserMustExist(email: string) {
@@ -206,12 +207,27 @@ export class UserService {
     return toUserResponse(userUpdate);
   }
 
-  static async list() {
-    const users = await prismaClient.user.findMany({
-      where: {
-        role: "USER",
-      },
+  static async list(
+    page: number = 1,
+    size: number = 10
+  ): Promise<pagingResponse<UserResponse>> {
+    const skip = (page - 1) * size;
+    const totalData = await prismaClient.user.count({
+      where: { role: "USER" },
     });
-    return users.map(toUserResponse);
+    const users = await prismaClient.user.findMany({
+      where: { role: "USER" },
+      skip,
+      take: size,
+      orderBy: { createdAt: "desc" },
+    });
+    return {
+      data: users.map((user) => toUserResponse(user)),
+      paging: {
+        size,
+        total_page: Math.ceil(totalData / size),
+        current_page: page,
+      },
+    };
   }
 }

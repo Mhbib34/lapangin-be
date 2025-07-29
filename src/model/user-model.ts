@@ -5,18 +5,20 @@ export type CreateUserRequest = {
   password: string;
   name: string;
   email: string;
+  phone?: string;
   role?: Role;
 };
 export type UpdateUserRequest = {
   username?: string;
   password?: string;
   name?: string;
+  phone?: string;
   email?: string;
   role?: Role;
 };
 export type LoginUserRequest = {
-  password: string;
   email: string;
+  password: string;
 };
 export type SendResetPWOtpRequest = {
   email: string;
@@ -35,6 +37,7 @@ export type UserResponse = {
   username: string;
   name: string;
   email: string;
+  phone?: string | null;
   role?: string;
   isAccountVerified?: boolean;
   createdAt?: Date;
@@ -47,6 +50,7 @@ export function toUserResponse(user: User): UserResponse {
     name: user.name,
     email: user.email,
     role: user.role,
+    phone: user.phone,
     isAccountVerified: user.isAccountVerified,
     createdAt: user.createdAt,
   };
