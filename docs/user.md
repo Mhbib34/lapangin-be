@@ -311,3 +311,55 @@ Response Body (Failed) :
   "errors": "Expired OTP, ..."
 }
 ```
+
+## List Users
+
+Endpoint : GET /api/users/list
+
+Request Header :
+
+- Authorization: Bearer token
+- Cookie: token= jwt
+
+Response Body (Success) :
+
+```json
+{
+  "success": true,
+  "message": "List User Successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "username": "Habib",
+      "name": "Muhammad Habib",
+      "email": "habib@example.com",
+      "isAccountVerified": false,
+      "role": "USER" //default user
+    },
+    {
+      "id": "uuid",
+      "username": "Habib",
+      "name": "Muhammad Habib",
+      "email": "habib@example.com",
+      "isAccountVerified": false,
+      "role": "USER" //default user
+    },
+    {
+      "id": "uuid",
+      "username": "Habib",
+      "name": "Muhammad Habib",
+      "email": "habib@example.com",
+      "isAccountVerified": false,
+      "role": "USER" //default user
+    }
+  ]
+}
+```
+
+Response Body (Failed) :
+
+```json
+{
+  "errors": "Unauthorized, ..."
+}
+```
