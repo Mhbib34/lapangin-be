@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import { web } from "../src/config/web";
 import { logger } from "../src/config/logging";
-import { loginAndGetToken, UserTest } from "./test.util";
+import { loginAndGetToken, loginAndGetTokenAdmin, UserTest } from "./test.util";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
@@ -412,5 +412,49 @@ describe("PATCH /api/users/verify-email", () => {
     console.log(res.body);
     expect(res.status).toEqual(400);
     expect(res.body.errors).toBeDefined();
+  });
+});
+
+describe("GET /api/users/list", () => {
+  let tokenUser: string;
+  let tokenAdmin: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    await UserTest.createUserAdmin();
+    tokenUser = await loginAndGetToken();
+    tokenAdmin = await loginAndGetTokenAdmin();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+    await UserTest.deleteAllAdmin();
+  });
+
+  it("should can list users", async () => {
+    const res = await supertest(web)
+      .get(`/api/users/list`)
+      .set("Cookie", [`token=${tokenAdmin}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject list users if token is invalid", async () => {
+    const res = await supertest(web)
+      .get(`/api/users/list`)
+      .set("Cookie", [`token=invalid_token`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject list users if token is not admin", async () => {
+    const res = await supertest(web)
+      .get(`/api/users/list`)
+      .set("Cookie", [`token=${tokenUser}`]);
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(403);
   });
 });
