@@ -70,13 +70,24 @@ export class BookingService {
     );
     await FieldService.checkFieldMustExist(bookingRequest.fieldId);
 
+    const now = new Date();
+
+    if (bookingRequest.startTime >= bookingRequest.endTime) {
+      throw new ResponseError(400, "Start time must be before end time");
+    }
+
+    if (bookingRequest.startTime < now) {
+      throw new ResponseError(400, "Start time must be in the future");
+    }
+
     const findBooking = await prismaClient.booking.findFirst({
       where: {
+        fieldId: bookingRequest.fieldId,
         startTime: {
           lte: bookingRequest.endTime,
         },
         endTime: {
-          gte: bookingRequest.startTime,
+          gt: bookingRequest.startTime,
         },
       },
     });
