@@ -160,11 +160,13 @@ export class UserController {
 
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
-      const result = await UserService.list();
+      const page = parseInt(req.query.page as string) || 1;
+      const size = parseInt(req.query.size as string) || 10;
+      const result = await UserService.list(page, size);
       res.status(200).json({
         success: true,
         message: "List User Successfully",
-        data: result,
+        ...result,
       });
     } catch (error) {
       next(error);

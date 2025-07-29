@@ -12,6 +12,7 @@ describe("POST /api/users", () => {
     const res = await supertest(web).post("/api/users").send({
       username: "test",
       password: "rahasia",
+      phone: "080808080808",
       name: "test",
       email: "test@example.com",
     });
@@ -29,12 +30,14 @@ describe("POST /api/users", () => {
       username: "test",
       password: "rahasia",
       name: "test",
+      phone: "080808080808",
       email: "test@example.com",
     });
     const res = await supertest(web).post("/api/users").send({
       username: "test",
       password: "rahasia",
       name: "test",
+      phone: "080808080808",
       email: "test@example.com",
     });
 
@@ -171,6 +174,7 @@ describe("PATCH /api/users", () => {
       .send({
         name: "test update",
         password: "rahasia baru",
+        phone: "082121121121",
         username: "test baru",
       });
     console.log(res.body);
@@ -188,6 +192,7 @@ describe("PATCH /api/users", () => {
       .send({
         name: "test update",
         password: "rahasia baru",
+        phone: "082121121121",
         username: "test baru",
       });
     console.log(res.body);

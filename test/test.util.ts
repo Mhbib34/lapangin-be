@@ -66,6 +66,7 @@ export class UserTest {
         password: await bcrypt.hash("rahasia", 10),
         name: "test",
         email: "test@example.com",
+        phone: "080808080808",
       },
     });
   }
