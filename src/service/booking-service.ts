@@ -68,7 +68,13 @@ export class BookingService {
       BookingValidation.CREATE,
       request
     );
-    await FieldService.checkFieldMustExist(bookingRequest.fieldId);
+    const field = await FieldService.checkFieldMustExist(
+      bookingRequest.fieldId
+    );
+
+    if (field.status !== "ACTIVE") {
+      throw new ResponseError(400, `Lapangan Sedang ${field.status}`);
+    }
 
     const now = new Date();
 
