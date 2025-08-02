@@ -182,6 +182,7 @@ export class UserController {
     try {
       const request: UpdatePasswordRequest = req.body as UpdatePasswordRequest;
       const result = await UserService.updatePassword(req.user!, request);
+      JwtUtils.clearToken(res);
       res.status(200).json({
         success: true,
         message: "Update password successfully",
