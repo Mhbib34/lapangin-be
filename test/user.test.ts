@@ -463,3 +463,89 @@ describe("GET /api/users/list", () => {
     expect(res.status).toEqual(403);
   });
 });
+
+describe("PATCH /api/users/password", () => {
+  let token: string;
+  beforeEach(async () => {
+    await UserTest.createUser();
+    token = await loginAndGetToken();
+  });
+
+  afterEach(async () => {
+    await UserTest.deleteAll();
+  });
+
+  it("should can change password", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        currentPassword: "rahasia",
+        newPassword: "newPassword",
+        confirmPassword: "newPassword",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(200);
+  });
+
+  it("should reject change password if token is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/password")
+      .set("Cookie", [`token=invalid_token`])
+      .send({
+        currentPassword: "rahasia",
+        newPassword: "newPassword",
+        confirmPassword: "newPassword",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(401);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject change password if request body is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        currentPassword: "rahasia",
+        newPassword: "",
+        confirmPassword: "newPassword",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject change password if current password is invalid", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        currentPassword: "invalid_password",
+        newPassword: "newPassword",
+        confirmPassword: "newPassword",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+    expect(res.body.errors).toBeDefined();
+  });
+
+  it("should reject change password if new password and confirm password is not same", async () => {
+    const res = await supertest(web)
+      .patch("/api/users/password")
+      .set("Cookie", [`token=${token}`])
+      .send({
+        currentPassword: "rahasia",
+        newPassword: "aasdasd",
+        confirmPassword: "newPassword",
+      });
+    logger.debug(res.body);
+    console.log(res.body);
+    expect(res.status).toEqual(400);
+    expect(res.body.errors).toBeDefined();
+  });
+});

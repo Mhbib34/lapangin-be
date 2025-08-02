@@ -24,6 +24,12 @@ export type SendResetPWOtpRequest = {
   email: string;
 };
 
+export type UpdatePasswordRequest = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
 export type ResetPasswordRequest = {
   newPassword: string;
   otp: number;

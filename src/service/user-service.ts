@@ -6,6 +6,7 @@ import {
   ResetPasswordRequest,
   SendResetPWOtpRequest,
   toUserResponse,
+  UpdatePasswordRequest,
   UpdateUserRequest,
   UserResponse,
   VerifyEmailRequest,
@@ -229,5 +230,34 @@ export class UserService {
         current_page: page,
       },
     };
+  }
+
+  static async updatePassword(user: User, request: UpdatePasswordRequest) {
+    const userRequest = Validation.validate(
+      UserValidation.UPDATE_PASSWORD,
+      request
+    );
+    const isPasswordSame = await bcrypt.compare(
+      userRequest.currentPassword,
+      user.password
+    );
+    if (!isPasswordSame) throw new ResponseError(400, "Invalid password");
+    const newPassword = await bcrypt.hash(userRequest.newPassword, 10);
+
+    if (newPassword === user.password)
+      throw new ResponseError(400, "Password cannot be same as old password");
+
+    if (userRequest.newPassword !== userRequest.confirmPassword)
+      throw new ResponseError(400, "Password not match");
+
+    const userUpdate = await prismaClient.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: newPassword,
+      },
+    });
+    return toUserResponse(userUpdate);
   }
 }
