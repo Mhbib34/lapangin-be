@@ -10,6 +10,7 @@ UserRouter.post("/login", UserController.login);
 UserRouter.get("/", userAuth, UserController.get);
 UserRouter.get("/list", userAuth, isAdmin, UserController.list);
 UserRouter.patch("/", userAuth, UserController.update);
+UserRouter.patch("/password", userAuth, UserController.updatePassword);
 UserRouter.delete("/", userAuth, UserController.logout);
 UserRouter.post("/reset-otp", UserController.resetOtp);
 UserRouter.patch("/reset-password", UserController.resetPassword);

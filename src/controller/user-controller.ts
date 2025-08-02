@@ -4,6 +4,7 @@ import {
   LoginUserRequest,
   ResetPasswordRequest,
   SendResetPWOtpRequest,
+  UpdatePasswordRequest,
   UpdateUserRequest,
   VerifyEmailRequest,
 } from "../model/user-model";
@@ -167,6 +168,24 @@ export class UserController {
         success: true,
         message: "List User Successfully",
         ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updatePassword(
+    req: UserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const request: UpdatePasswordRequest = req.body as UpdatePasswordRequest;
+      const result = await UserService.updatePassword(req.user!, request);
+      res.status(200).json({
+        success: true,
+        message: "Update password successfully",
+        data: result,
       });
     } catch (error) {
       next(error);
